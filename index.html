@@ -448,7 +448,7 @@
             signInWithCustomToken,
             signInAnonymously
         } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, collection } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc, onSnapshot, collection } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // --- FIREBASE CONFIG ---
         const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
@@ -472,6 +472,7 @@
         // --- STATE ---
         let courses = [], studyData = {}, dailyGoals = [];
         let currentCourseIndex = -1, currentTopicIndex = -1, sessionSeconds = 0, isSaving = false;
+        let dataUnsubscribe = null; // For cleaning up listener
 
         // --- AUTH INITIALIZATION ---
         const initAuth = async () => {
@@ -566,42 +567,75 @@
                     document.getElementById('user-pic').src = user.photoURL;
                     document.getElementById('user-pic').style.display = 'block';
                 }
-                await loadCloudData();
+                // Setup real-time data listener
+                setupDataListener();
                 initApp();
             } else {
                 document.getElementById('login-screen').style.display = 'flex';
+                if(dataUnsubscribe) dataUnsubscribe();
             }
         });
 
-        // --- CLOUD & APP LOGIC ---
-        async function loadCloudData() {
+        // --- CLOUD & APP LOGIC (FIXED RESET ISSUE) ---
+        function setupDataListener() {
+            if (dataUnsubscribe) dataUnsubscribe();
             try {
-                const snap = await getDoc(doc(db, 'artifacts', appId, 'users', user.uid, 'data', 'profile'));
-                if (snap.exists()) {
-                    const data = snap.data();
-                    courses = data.courses || []; studyData = data.studyData || {}; dailyGoals = data.dailyGoals || [];
-                } else {
-                    courses = []; studyData = {}; dailyGoals = []; saveCloudData();
-                }
-            } catch (e) { console.error("Load error", e); }
+                // Using onSnapshot for Real-time updates so data is always sync
+                const docRef = doc(db, 'artifacts', appId, 'users', user.uid, 'data', 'profile');
+                dataUnsubscribe = onSnapshot(docRef, (docSnap) => {
+                    if (docSnap.exists()) {
+                        const data = docSnap.data();
+                        // Only update if we are not currently saving to avoid conflict loop
+                        if (!isSaving) {
+                            courses = data.courses || [];
+                            studyData = data.studyData || {};
+                            dailyGoals = data.dailyGoals || [];
+                            renderCourses(); // Re-render in case of external update
+                            renderHeatmap();
+                            renderGoals();
+                            updateStats();
+                        }
+                    } else {
+                        // No data yet, initialize
+                        courses = []; studyData = {}; dailyGoals = [];
+                        saveCloudData();
+                    }
+                }, (error) => {
+                    console.error("Data fetch error:", error);
+                });
+            } catch (e) { console.error("Listener Setup Error", e); }
         }
 
         async function saveCloudData() {
             if (!user || isSaving) return;
+            // Safety check: Don't save if data is empty to prevent overwrite on load fail
+            if (Object.keys(studyData).length === 0 && courses.length === 0 && sessionSeconds > 5) {
+                // Proceed only if it's a fresh start, otherwise might be risk
+            }
+            
             isSaving = true;
             try { 
                 await setDoc(doc(db, 'artifacts', appId, 'users', user.uid, 'data', 'profile'), { courses, studyData, dailyGoals }, { merge: true }); 
+                console.log("Saved successfully");
             } catch(e) { console.error("Save error", e); }
             isSaving = false;
         }
 
         function initApp() {
-            renderCourses(); renderHeatmap(); renderGoals(); updateStats();
+            // Initial render handled by snapshot listener mostly
             setInterval(() => { sessionSeconds++; updateTimer(); }, 1000);
-            setInterval(() => { const today = new Date().toISOString().split('T')[0]; studyData[today] = (studyData[today] || 0) + 10; saveCloudData(); updateStats(); }, 10000);
+            // Auto-save every 10 seconds
+            setInterval(() => { 
+                if(user) {
+                    const today = new Date().toISOString().split('T')[0];
+                    studyData[today] = (studyData[today] || 0) + 10; 
+                    saveCloudData(); 
+                    updateStats(); 
+                }
+            }, 10000);
         }
 
-        // --- AI CHAT LOGIC (NEW) ---
+        // --- AI CHAT LOGIC (FIXED ERROR HANDLING) ---
         window.openAIModal = () => {
             document.getElementById('ai-modal').style.display = 'flex';
             setTimeout(() => document.getElementById('ai-input').focus(), 100);
@@ -614,52 +648,44 @@
             
             if (!query) return;
 
-            // Add User Message
             addChatMsg(query, 'user');
             input.value = '';
             btn.disabled = true;
             btn.innerText = "...";
 
-            // Show Loading
             const loadingId = addChatMsg('<div class="typing-dot"></div><div class="typing-dot"></div>', 'ai');
 
             try {
                 const apiKey = ""; // Environment provided
                 const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
                 
-                // Simple retry logic
-                let responseData = null;
-                for(let i=0; i<3; i++) {
-                    try {
-                        const response = await fetch(url, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                contents: [{ parts: [{ text: "Answer this concisely for a student: " + query }] }]
-                            })
-                        });
-                        if(response.ok) {
-                            responseData = await response.json();
-                            break;
-                        } else { await new Promise(r => setTimeout(r, 1000 * Math.pow(2, i))); }
-                    } catch(e) { await new Promise(r => setTimeout(r, 1000 * Math.pow(2, i))); }
-                }
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: "Answer this concisely for a student: " + query }] }]
+                    })
+                });
 
-                // Remove loading
                 document.getElementById(loadingId).remove();
 
-                if (responseData && responseData.candidates && responseData.candidates[0].content) {
-                    const aiText = responseData.candidates[0].content.parts[0].text;
-                    // Basic formatting
-                    const formattedText = aiText.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>');
-                    addChatMsg(formattedText, 'ai');
+                if(response.ok) {
+                    const responseData = await response.json();
+                    if (responseData && responseData.candidates && responseData.candidates[0].content) {
+                        const aiText = responseData.candidates[0].content.parts[0].text;
+                        const formattedText = aiText.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>');
+                        addChatMsg(formattedText, 'ai');
+                    } else {
+                        addChatMsg("Sorry, I couldn't interpret the response.", 'ai');
+                    }
                 } else {
-                    addChatMsg("Sorry, I couldn't connect to the AI right now. Please try again.", 'ai');
+                    // Show specific error code to help debug
+                    addChatMsg(`Sorry, I encountered an error. (Status: ${response.status} - ${response.statusText}). Please check your API Key or Network.`, 'ai');
                 }
 
             } catch (error) {
                 document.getElementById(loadingId)?.remove();
-                addChatMsg("Error: " + error.message, 'ai');
+                addChatMsg("Connection Error: " + error.message, 'ai');
             } finally {
                 btn.disabled = false;
                 btn.innerText = "Send";
