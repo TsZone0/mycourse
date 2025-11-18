@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pro Study Portal (Cloud Sync)</title>
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --sidebar-bg: #111827;
+            --nav-bg: #1e293b;
+            --card-bg: #1e293b;
+            --text-main: #e2e8f0;
+            --text-muted: #94a3b8;
+            --accent: #3b82f6;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', 'Segoe UI', sans-serif; }
+        
+        body { background-color: var(--bg-dark); color: var(--text-main); display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+
+        /* Login Screen */
+        #login-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-dark); z-index: 200;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+        }
+        .google-btn {
+            background: white; color: #333; padding: 12px 24px; border-radius: 24px;
+            border: none; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 10px;
+            font-size: 1rem; transition: 0.2s;
+        }
+        .google-btn:hover { transform: scale(1.05); }
+
+        /* Navbar */
+        .navbar {
+            height: 60px; background-color: var(--nav-bg); border-bottom: 1px solid #334155;
+            display: none; /* Hidden until login */
+            align-items: center; justify-content: space-between; padding: 0 25px; z-index: 50;
+        }
+
+        .nav-links { display: flex; gap: 20px; height: 100%; }
+        .nav-item { display: flex; align-items: center; cursor: pointer; color: var(--text-muted); padding: 0 10px; }
+        .nav-item.active { color: white; border-bottom: 2px solid var(--accent); }
+        
+        /* App Container */
+        .app-container { display: none; flex: 1; overflow: hidden; position: relative; } /* Hidden until login */
+
+        /* Reuse previous styles */
+        #home-view { width: 100%; height: 100%; padding: 40px; overflow-y: auto; background: radial-gradient(circle at top center, #1e293b 0%, #0f172a 70%); display: flex; flex-direction: column; gap: 30px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+        .stat-card { background: rgba(30, 41, 59, 0.7); border: 1px solid #334155; padding: 25px; border-radius: 16px; text-align: center; }
+        .stat-value { font-size: 2.5rem; font-weight: bold; color: white; display: block; margin: 10px 0; }
+        .stat-label { color: var(--text-muted); font-size: 0.9rem; text-transform: uppercase; }
+        .courses-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+        .course-card { background: var(--card-bg); border: 1px solid #334155; padding: 20px; border-radius: 12px; cursor: pointer; min-height: 150px; }
+        .course-card:hover { border-color: var(--accent); transform: translateY(-5px); }
+        .add-new { border: 2px dashed #334155; display: flex; align-items: center; justify-content: center; flex-direction: column; background: transparent; }
+        
+        /* Course View */
+        #course-view { display: none; width: 100%; height: 100%; }
+        .sidebar { width: 320px; background: var(--sidebar-bg); border-right: 1px solid #1e293b; display: flex; flex-direction: column; }
+        .main-content { flex: 1; padding: 40px; background: #0f172a; overflow-y: auto; }
+        .topic-item { padding: 12px; margin-bottom: 8px; background: var(--card-bg); border-radius: 6px; cursor: pointer; display: flex; justify-content: space-between; }
+        .topic-item.active { background: #1e3a8a; border-left: 4px solid var(--accent); }
+        .topic-item.completed { background: #064e3b; }
+        
+        .cinema-container { width: 100%; max-width: 900px; aspect-ratio: 16/9; background: #000; border-radius: 16px; margin-bottom: 20px; }
+        iframe { width: 100%; height: 100%; border: none; }
+
+        /* Utilities */
+        .btn { padding: 10px 20px; border-radius: 8px; border: none; cursor: pointer; font-weight: 600; color: white; }
+        .btn-primary { background: var(--accent); }
+        .btn-success { background: var(--success); width: 100%; padding: 15px; margin-bottom: 20px; }
+        .btn-danger { background: transparent; color: var(--danger); border: 1px solid var(--danger); }
+        
+        /* Modals */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 100; justify-content: center; align-items: center; }
+        .modal-content { background: var(--card-bg); padding: 30px; border-radius: 16px; width: 400px; border: 1px solid #334155; }
+        .modal input { width: 100%; padding: 12px; margin: 10px 0; background: #0f172a; border: 1px solid #475569; color: white; border-radius: 6px; }
+
+        /* Loader */
+        .loader { border: 4px solid #f3f3f3; border-top: 4px solid var(--accent); border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin-top: 20px; display: none; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    </style>
+</head>
+<body>
+
+    <!-- Login Screen -->
+    <div id="login-screen">
+        <h1 style="margin-bottom: 20px;">🎓 My Study Portal</h1>
+        <p style="color: var(--text-muted); margin-bottom: 40px;">Sync your progress across all devices.</p>
+        
+        <button class="google-btn" onclick="handleLogin()">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" width="20" alt="G">
+            Sign in with Google
+        </button>
+        <div class="loader" id="auth-loader"></div>
+        <p id="login-error" style="color: var(--danger); margin-top: 20px; display: none;"></p>
+    </div>
+
+    <!-- App UI (Hidden initially) -->
+    <nav class="navbar" id="main-nav">
+        <div class="logo" onclick="switchView('home')">🎓 Study Portal</div>
+        <div class="nav-links">
+            <div class="nav-item active" id="nav-home" onclick="switchView('home')">Dashboard</div>
+            <div class="nav-item" id="nav-course" onclick="if(currentCourseIndex > -1) switchView('course')">Course</div>
+        </div>
+        <div style="display: flex; gap: 15px; align-items: center;">
+            <div style="color: var(--accent); font-weight: bold;">⏱️ <span id="session-timer">00:00</span></div>
+            <img id="user-pic" src="" style="width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--accent);" alt="User">
+            <button class="btn" style="padding: 5px 10px; font-size: 0.8rem; background: #334155;" onclick="handleLogout()">Logout</button>
+        </div>
+    </nav>
+
+    <div class="app-container" id="main-app">
+        <!-- Home View -->
+        <div id="home-view">
+            <div>
+                <h1 id="welcome-msg">Welcome!</h1>
+                <p style="color: var(--text-muted);">Your data is safe on the cloud ☁️</p>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-card"><span class="stat-label">Today</span><span class="stat-value" id="stat-today">0m</span></div>
+                <div class="stat-card"><span class="stat-label">Total Time</span><span class="stat-value" id="stat-total">0h</span></div>
+            </div>
+            <h2 style="margin-top: 20px; border-top: 1px solid #334155; padding-top: 20px;">My Courses</h2>
+            <div class="courses-grid" id="courses-grid">
+                <div class="course-card add-new" onclick="openCreateModal()"><span style="font-size: 2rem;">+</span><span>Create New</span></div>
+            </div>
+        </div>
+
+        <!-- Course View -->
+        <div id="course-view">
+            <div class="sidebar">
+                <div style="padding: 20px; border-bottom: 1px solid #334155; background: #0b1120;">
+                    <h3 id="course-title-display">Loading...</h3>
+                    <div style="margin-top: 10px; background: #334155; height: 4px;"><div id="progress-bar" style="width: 0%; background: var(--accent); height: 100%;"></div></div>
+                </div>
+                <div class="topic-list" id="topic-list"></div>
+            </div>
+            <div class="main-content">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+                    <button class="btn btn-primary" onclick="switchView('home')">← Dashboard</button>
+                    <button class="btn btn-primary" onclick="document.getElementById('add-topic-modal').style.display='flex'">+ Add Topic</button>
+                </div>
+                <div class="cinema-container"><iframe id="video-player" src="" allowfullscreen></iframe></div>
+                <button id="mark-btn" class="btn btn-success" onclick="markComplete()">✅ Mark as Completed</button>
+                <div style="background: var(--card-bg); padding: 20px; border-radius: 10px;">
+                    <h2 id="video-title">Select Topic</h2>
+                    <p id="video-desc" style="color: var(--text-muted);">...</p>
+                    <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #334155;">
+                         <button class="btn btn-danger" onclick="deleteTopic()">Delete Topic</button>
+                         <button class="btn btn-danger" onclick="deleteCourse()">Delete Course</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div class="modal" id="create-course-modal">
+        <div class="modal-content">
+            <h2>New Course</h2>
+            <input type="text" id="new-course-name" placeholder="Course Name">
+            <button class="btn btn-primary" style="width: 100%;" onclick="createNewCourse()">Create</button>
+            <button class="btn btn-danger" style="width: 100%; margin-top: 10px; border: none;" onclick="document.getElementById('create-course-modal').style.display='none'">Cancel</button>
+        </div>
+    </div>
+    <div class="modal" id="add-topic-modal">
+        <div class="modal-content">
+            <h2>Add Lecture</h2>
+            <input type="text" id="inp-title" placeholder="Title">
+            <input type="text" id="inp-link" placeholder="YouTube Link">
+            <input type="text" id="inp-desc" placeholder="Description">
+            <button class="btn btn-primary" style="width: 100%;" onclick="addTopic()">Add</button>
+            <button class="btn btn-danger" style="width: 100%; margin-top: 10px; border: none;" onclick="document.getElementById('add-topic-modal').style.display='none'">Cancel</button>
+        </div>
+    </div>
+
+    <!-- FIREBASE LOGIC -->
+    <script type="module">
+        // Import Firebase Functions
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+
+        // --- YOUR FIREBASE CONFIG (Extracted from your data) ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyCf-BoHSE_-2YhF7DAbxYXT0cHOprE9rzk",
+            authDomain: "mycourse-231f1.firebaseapp.com",
+            projectId: "mycourse-231f1",
+            storageBucket: "mycourse-231f1.firebasestorage.app",
+            messagingSenderId: "519848272346",
+            // Note: You provided an Android Client ID. For web, usually you create a Web App in Firebase Console.
+            // I have put the Android ID here, it *might* work for basic connection, but if it fails, 
+            // create a Web App in Firebase console and replace this appId.
+            appId: "1:519848272346:android:b495935905823e921920e3" 
+        };
+
+        // Initialize Firebase
+        let app, auth, db, user;
+        
+        try {
+            app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            db = getFirestore(app);
+        } catch (e) {
+            console.error("Firebase Config Missing or Invalid", e);
+            alert("Firebase Setup Error. Check Console.");
+        }
+
+        // --- App State ---
+        let courses = [];
+        let studyData = {};
+        let currentCourseIndex = -1;
+        let currentTopicIndex = -1;
+        let sessionSeconds = 0;
+        let isSaving = false;
+
+        // --- Auth Logic ---
+        window.handleLogin = () => {
+            const provider = new GoogleAuthProvider();
+            document.getElementById('auth-loader').style.display = 'block';
+            signInWithPopup(auth, provider)
+                .catch((error) => {
+                    console.error("Login Error:", error);
+                    document.getElementById('login-error').innerText = "Error: " + error.message;
+                    document.getElementById('login-error').style.display = 'block';
+                    document.getElementById('auth-loader').style.display = 'none';
+                });
+        }
+
+        window.handleLogout = () => {
+            signOut(auth).then(() => location.reload());
+        }
+
+        // Watch Auth State
+        onAuthStateChanged(auth, async (currentUser) => {
+            document.getElementById('auth-loader').style.display = 'none';
+            if (currentUser) {
+                user = currentUser;
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('main-nav').style.display = 'flex';
+                document.getElementById('main-app').style.display = 'flex';
+                document.getElementById('welcome-msg').innerText = `Welcome, ${user.displayName.split(' ')[0]}!`;
+                document.getElementById('user-pic').src = user.photoURL;
+                
+                await loadCloudData(); // Load data from Firestore
+                initApp();
+            } else {
+                document.getElementById('login-screen').style.display = 'flex';
+            }
+        });
+
+        // --- Cloud Logic (Firestore) ---
+        async function loadCloudData() {
+            const docRef = doc(db, "users", user.uid);
+            try {
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    courses = data.courses || [];
+                    studyData = data.studyData || {};
+                } else {
+                    // New User
+                    courses = [{ name: "Demo Course", topics: [] }];
+                    studyData = {};
+                    saveCloudData(); // Create initial doc
+                }
+            } catch (error) {
+                console.error("Error fetching data:", error);
+                alert("Error loading data. Check your internet or Firebase Rules.");
+            }
+        }
+
+        async function saveCloudData() {
+            if (!user || isSaving) return;
+            isSaving = true;
+            try {
+                await setDoc(doc(db, "users", user.uid), {
+                    courses: courses,
+                    studyData: studyData,
+                    lastUpdated: new Date()
+                });
+            } catch(e) { console.error("Save failed", e); }
+            isSaving = false;
+        }
+
+        // --- App Functions (Connected to UI) ---
+        function initApp() {
+            updateStats();
+            renderCourses();
+            setInterval(() => { sessionSeconds++; updateTimer(); }, 1000);
+            setInterval(() => { 
+                // Auto Save Time every 10s
+                const today = new Date().toISOString().split('T')[0];
+                studyData[today] = (studyData[today] || 0) + 10;
+                saveCloudData();
+                updateStats();
+            }, 10000);
+        }
+
+        function updateTimer() {
+            const m = Math.floor(sessionSeconds/60);
+            const s = sessionSeconds%60;
+            document.getElementById('session-timer').innerText = `${m}:${s<10?'0'+s:s}`;
+        }
+
+        function updateStats() {
+            const today = new Date().toISOString().split('T')[0];
+            const tSec = studyData[today] || 0;
+            let total = 0;
+            Object.values(studyData).forEach(v => total += v);
+            
+            document.getElementById('stat-today').innerText = (tSec/60).toFixed(1) + 'm';
+            document.getElementById('stat-total').innerText = (total/3600).toFixed(1) + 'h';
+        }
+
+        window.openCreateModal = () => document.getElementById('create-course-modal').style.display='flex';
+        
+        window.createNewCourse = () => {
+            const name = document.getElementById('new-course-name').value;
+            if(name) {
+                courses.push({ name, topics: [] });
+                saveCloudData();
+                renderCourses();
+                document.getElementById('create-course-modal').style.display='none';
+            }
+        }
+
+        function renderCourses() {
+            const grid = document.getElementById('courses-grid');
+            const addBtn = grid.querySelector('.add-new');
+            grid.querySelectorAll('.course-card:not(.add-new)').forEach(e => e.remove());
+            
+            courses.forEach((c, idx) => {
+                const div = document.createElement('div');
+                div.className = 'course-card';
+                div.innerHTML = `<h3>${c.name}</h3><p>${c.topics.length} Topics</p>`;
+                div.onclick = () => loadCourse(idx);
+                grid.insertBefore(div, addBtn);
+            });
+        }
+
+        window.loadCourse = (idx) => {
+            currentCourseIndex = idx;
+            const c = courses[idx];
+            document.getElementById('course-title-display').innerText = c.name;
+            switchView('course');
+            renderTopics();
+            if(c.topics.length > 0) loadTopic(0);
+            else {
+                document.getElementById('video-player').src = '';
+                document.getElementById('video-title').innerText = "No Topic";
+            }
+        }
+
+        function renderTopics() {
+            const list = document.getElementById('topic-list');
+            list.innerHTML = '';
+            const t = courses[currentCourseIndex].topics;
+            let done = 0;
+            t.forEach((topic, i) => {
+                if(topic.completed) done++;
+                const div = document.createElement('div');
+                div.className = `topic-item ${topic.completed?'completed':''} ${i===currentTopicIndex?'active':''}`;
+                div.innerHTML = `<span>${i+1}. ${topic.title}</span><span>${topic.completed?'✓':''}</span>`;
+                div.onclick = () => loadTopic(i);
+                list.appendChild(div);
+            });
+            document.getElementById('progress-bar').style.width = t.length ? (done/t.length)*100+'%' : '0%';
+        }
+
+        window.loadTopic = (i) => {
+            currentTopicIndex = i;
+            const t = courses[currentCourseIndex].topics[i];
+            document.getElementById('video-player').src = t.url;
+            document.getElementById('video-title').innerText = t.title;
+            document.getElementById('video-desc').innerText = t.desc;
+            renderTopics();
+        }
+
+        window.addTopic = () => {
+            const title = document.getElementById('inp-title').value;
+            const link = document.getElementById('inp-link').value;
+            const desc = document.getElementById('inp-desc').value;
+            
+            const match = link.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=|shorts\/)([^#&?]*).*/);
+            if(match && match[2].length===11) {
+                courses[currentCourseIndex].topics.push({
+                    title, desc, completed: false,
+                    url: `https://www.youtube.com/embed/${match[2]}?modestbranding=1&rel=0&loop=1&playlist=${match[2]}`
+                });
+                saveCloudData();
+                renderTopics();
+                document.getElementById('add-topic-modal').style.display='none';
+                if(courses[currentCourseIndex].topics.length===1) loadTopic(0);
+            } else { alert("Invalid Link"); }
+        }
+
+        window.markComplete = () => {
+            if(currentTopicIndex > -1) {
+                courses[currentCourseIndex].topics[currentTopicIndex].completed = true;
+                saveCloudData();
+                renderTopics();
+            }
+        }
+        
+        window.deleteTopic = () => {
+            if(confirm("Delete topic?") && currentTopicIndex > -1) {
+                courses[currentCourseIndex].topics.splice(currentTopicIndex, 1);
+                saveCloudData();
+                renderTopics();
+                if(courses[currentCourseIndex].topics.length > 0) loadTopic(0);
+            }
+        }
+
+        window.deleteCourse = () => {
+             if(confirm("Delete Course?")) {
+                 courses.splice(currentCourseIndex, 1);
+                 saveCloudData();
+                 switchView('home');
+                 renderCourses();
+             }
+        }
+
+        window.switchView = (v) => {
+            document.getElementById('home-view').style.display = v==='home'?'flex':'none';
+            document.getElementById('course-view').style.display = v==='course'?'flex':'none';
+            document.getElementById('nav-home').classList.toggle('active', v==='home');
+            document.getElementById('nav-course').classList.toggle('active', v==='course');
+            if(v==='home') renderCourses();
+        }
+
+    </script>
+</body>
+</html>
