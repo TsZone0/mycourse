@@ -15,6 +15,7 @@
             --accent: #58a6ff;
             --success: #238636;
             --danger: #da3633;
+            --pink-text: #ff79c6; /* New Pink Color */
             --border: #30363d;
         }
 
@@ -60,11 +61,14 @@
         .stat-value { font-size: 2rem; font-weight: bold; color: var(--text-main); display: block; margin: 5px 0; }
         .stat-label { color: var(--text-muted); font-size: 0.85rem; }
 
-        /* Heatmap */
-        .heatmap-card { background: var(--card-bg); border: 1px solid var(--border); padding: 20px; border-radius: 6px; overflow-x: auto; }
-        .heatmap-grid { display: flex; gap: 3px; min-width: max-content; }
-        .heatmap-col { display: flex; flex-direction: column; gap: 3px; }
-        .heatmap-cell { width: 12px; height: 12px; border-radius: 2px; background: #161b22; border: 1px solid #282e36; }
+        /* UPDATED Heatmap (Month-wise) */
+        .heatmap-card { background: var(--card-bg); border: 1px solid var(--border); padding: 20px; border-radius: 6px; }
+        .heatmap-container { display: flex; flex-wrap: wrap; gap: 20px; }
+        .heatmap-month { display: flex; flex-direction: column; gap: 5px; }
+        .heatmap-month-label { font-size: 0.8rem; color: var(--text-muted); font-weight: bold; }
+        .heatmap-month-grid { display: grid; grid-template-columns: repeat(7, 10px); gap: 3px; }
+        
+        .heatmap-cell { width: 10px; height: 10px; border-radius: 2px; background: #161b22; border: 1px solid #282e36; }
         .h-l0 { background: #161b22; }
         .h-l1 { background: #0e4429; border-color: #0e4429; }
         .h-l2 { background: #006d32; border-color: #006d32; }
@@ -75,22 +79,11 @@
         .goals-card { background: var(--card-bg); border: 1px solid var(--border); padding: 20px; border-radius: 6px; flex: 1; }
         .goal-input-group { display: flex; gap: 10px; margin-bottom: 15px; }
         
-        /* New CSS for Goals Input */
         .goal-input-group input {
-            flex: 1;
-            padding: 10px 15px;
-            background: #0d1117;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            color: var(--text-main);
-            outline: none;
-            font-size: 0.95rem;
-            transition: border-color 0.2s;
+            flex: 1; padding: 10px 15px; background: #0d1117; border: 1px solid var(--border); border-radius: 6px;
+            color: var(--text-main); outline: none; font-size: 0.95rem; transition: border-color 0.2s;
         }
-        .goal-input-group input:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 2px rgba(88, 166, 255, 0.2);
-        }
+        .goal-input-group input:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(88, 166, 255, 0.2); }
 
         .goal-list { list-style: none; max-height: 300px; overflow-y: auto; }
         .goal-item { display: flex; align-items: center; gap: 10px; padding: 12px; border-bottom: 1px solid var(--border); transition: background 0.2s; }
@@ -112,10 +105,19 @@
         #course-view { display: none; width: 100%; height: 100%; }
         .sidebar { width: 300px; background: var(--sidebar-bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; }
         .main-content { flex: 1; padding: 40px; background: var(--bg-dark); overflow-y: auto; }
-        .topic-item { padding: 12px; margin-bottom: 5px; border-radius: 6px; cursor: pointer; display: flex; justify-content: space-between; font-size: 0.9rem; color: var(--text-muted); }
+        
+        /* UPDATED Topic Item Style */
+        .topic-item { padding: 12px; margin-bottom: 5px; border-radius: 6px; cursor: pointer; display: flex; justify-content: space-between; font-size: 0.9rem; color: var(--text-muted); transition: 0.2s; border: 1px solid transparent; }
         .topic-item:hover { background: #21262d; color: var(--text-main); }
         .topic-item.active { background: #1f6feb; color: white; }
-        .topic-item.completed { color: var(--success); }
+        
+        /* Green Box + Pink Text for Completed */
+        .topic-item.completed { 
+            background-color: var(--success) !important; 
+            color: var(--pink-text) !important; 
+            font-weight: bold;
+            border: 1px solid #2ea043;
+        }
         
         .cinema-container { width: 100%; max-width: 900px; aspect-ratio: 16/9; background: #000; border-radius: 6px; margin-bottom: 20px; border: 1px solid var(--border); }
         iframe { width: 100%; height: 100%; border: none; }
@@ -124,8 +126,15 @@
         .btn { padding: 8px 16px; border-radius: 6px; border: 1px solid rgba(27,31,36,0.15); cursor: pointer; font-weight: 600; font-size: 14px; transition: 0.2s; }
         .btn-primary { background: #238636; color: white; border: 1px solid rgba(27,31,36,0.15); }
         .btn-primary:hover { background: #2ea043; transform: translateY(-1px); }
+        
+        /* UPDATED Mark Button Style */
         .btn-complete-active { background: #238636; color: white; }
-        .btn-complete-done { background: #1f6feb; color: white; border-color: #1f6feb; } /* Blue for done */
+        .btn-complete-done { 
+            background-color: var(--success) !important; 
+            color: var(--pink-text) !important; 
+            border-color: #2ea043;
+            font-weight: bold;
+        }
         
         .btn-danger { background: transparent; color: var(--danger); border: 1px solid var(--border); }
         .btn-danger:hover { color: white; background: var(--danger); border-color: var(--danger); }
@@ -197,11 +206,13 @@
                         </div>
                     </div>
 
-                    <!-- Heatmap -->
+                    <!-- Heatmap (Month-wise) -->
                     <div class="heatmap-card">
-                        <h3 style="margin-bottom: 15px; font-size: 1rem;">Study Consistency (Last 365 Days)</h3>
-                        <div class="heatmap-grid" id="heatmap-grid"></div>
-                        <div style="display: flex; gap: 5px; align-items: center; margin-top: 10px; font-size: 0.75rem; color: var(--text-muted);">
+                        <h3 style="margin-bottom: 15px; font-size: 1rem;">Study Consistency (Last 12 Months)</h3>
+                        <div class="heatmap-container" id="heatmap-grid">
+                            <!-- Months injected here via JS -->
+                        </div>
+                        <div style="display: flex; gap: 5px; align-items: center; margin-top: 15px; font-size: 0.75rem; color: var(--text-muted);">
                             <span>Less</span>
                             <div class="heatmap-cell h-l0"></div>
                             <div class="heatmap-cell h-l1"></div>
@@ -263,7 +274,7 @@
                     <h2 id="video-title" style="color: var(--text-main);">Select Topic</h2>
                     <div style="display: flex; justify-content: space-between; align-items: flex-start;">
                         <p id="video-desc" style="margin-top: 5px;">...</p>
-                        <small id="completion-date" style="color: var(--accent); display: none;"></small>
+                        <small id="completion-date" style="color: var(--pink-text); display: none;"></small>
                     </div>
                     <button class="btn btn-danger" style="margin-top: 20px;" onclick="deleteCourse()">Delete Entire Course</button>
                 </div>
@@ -440,35 +451,53 @@
             }, 10000);
         }
 
-        // --- FEATURES ---
+        // --- UPDATED HEATMAP (Month-wise) ---
         function renderHeatmap() {
-            const grid = document.getElementById('heatmap-grid');
-            grid.innerHTML = '';
+            const container = document.getElementById('heatmap-grid');
+            container.innerHTML = '';
+            
             const today = new Date();
-            const startDate = new Date();
-            startDate.setDate(today.getDate() - 365);
-            while(startDate.getDay() !== 0) { startDate.setDate(startDate.getDate() - 1); }
-            let currentDate = new Date(startDate);
-            while (currentDate <= today) {
-                const col = document.createElement('div');
-                col.className = 'heatmap-col';
-                for (let i = 0; i < 7; i++) {
-                    const dateStr = currentDate.toISOString().split('T')[0];
-                    const mins = (studyData[dateStr] || 0) / 60;
+            // Loop last 12 months
+            for (let i = 11; i >= 0; i--) {
+                const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
+                const monthName = d.toLocaleString('default', { month: 'short' });
+                const year = d.getFullYear();
+                const daysInMonth = new Date(year, d.getMonth() + 1, 0).getDate();
+
+                // Month Wrapper
+                const monthDiv = document.createElement('div');
+                monthDiv.className = 'heatmap-month';
+
+                // Label
+                const label = document.createElement('div');
+                label.className = 'heatmap-month-label';
+                label.innerText = `${monthName}`;
+                monthDiv.appendChild(label);
+
+                // Grid
+                const grid = document.createElement('div');
+                grid.className = 'heatmap-month-grid';
+                
+                for(let day = 1; day <= daysInMonth; day++) {
+                    const dateStr = `${year}-${String(d.getMonth()+1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                    const seconds = studyData[dateStr] || 0;
+                    const mins = seconds / 60;
+
                     const cell = document.createElement('div');
                     cell.className = 'heatmap-cell';
                     cell.title = `${dateStr}: ${Math.round(mins)} mins`;
+                    
                     if (mins > 120) cell.classList.add('h-l4');
                     else if (mins > 60) cell.classList.add('h-l3');
                     else if (mins > 30) cell.classList.add('h-l2');
                     else if (mins > 0) cell.classList.add('h-l1');
                     else cell.classList.add('h-l0');
-                    col.appendChild(cell);
-                    currentDate.setDate(currentDate.getDate() + 1);
+
+                    grid.appendChild(cell);
                 }
-                grid.appendChild(col);
+                monthDiv.appendChild(grid);
+                container.appendChild(monthDiv);
             }
-            grid.parentElement.scrollLeft = grid.parentElement.scrollWidth;
         }
 
         window.addGoal = () => {
@@ -567,6 +596,7 @@
             t.forEach((topic, i) => {
                 if(topic.completed) done++;
                 const div = document.createElement('div');
+                // Check for completed state and add class
                 div.className = `topic-item ${i===currentTopicIndex?'active':''} ${topic.completed?'completed':''}`;
                 div.innerHTML = `<span>${i+1}. ${topic.title}</span><span>${topic.completed?'✓':''}</span>`;
                 div.onclick = () => loadTopic(i);
@@ -603,7 +633,7 @@
                 btn.classList.remove('btn-complete-done');
                 dateEl.style.display = 'none';
             }
-            renderTopics();
+            renderTopics(); // Re-render sidebar to show green/pink style
         }
 
         window.addTopic = () => {
@@ -629,7 +659,7 @@
                 topic.completed = !topic.completed;
                 topic.completedOn = topic.completed ? new Date().toISOString() : null;
                 saveCloudData();
-                loadTopic(currentTopicIndex); // Refresh UI to show/hide date
+                loadTopic(currentTopicIndex); // Refresh UI
             }
         }
         
