@@ -71,16 +71,35 @@
         .h-l3 { background: #26a641; border-color: #26a641; }
         .h-l4 { background: #39d353; border-color: #39d353; }
 
-        /* Daily Goals */
+        /* Daily Goals Styled Input */
         .goals-card { background: var(--card-bg); border: 1px solid var(--border); padding: 20px; border-radius: 6px; flex: 1; }
         .goal-input-group { display: flex; gap: 10px; margin-bottom: 15px; }
+        
+        /* New CSS for Goals Input */
+        .goal-input-group input {
+            flex: 1;
+            padding: 10px 15px;
+            background: #0d1117;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-main);
+            outline: none;
+            font-size: 0.95rem;
+            transition: border-color 0.2s;
+        }
+        .goal-input-group input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px rgba(88, 166, 255, 0.2);
+        }
+
         .goal-list { list-style: none; max-height: 300px; overflow-y: auto; }
-        .goal-item { display: flex; align-items: center; gap: 10px; padding: 10px; border-bottom: 1px solid var(--border); }
+        .goal-item { display: flex; align-items: center; gap: 10px; padding: 12px; border-bottom: 1px solid var(--border); transition: background 0.2s; }
+        .goal-item:hover { background: rgba(255,255,255,0.02); }
         .goal-item:last-child { border-bottom: none; }
         .goal-checkbox { width: 18px; height: 18px; accent-color: var(--success); cursor: pointer; }
         .goal-text { flex: 1; }
         .goal-done .goal-text { text-decoration: line-through; color: var(--text-muted); }
-        .delete-goal { color: var(--text-muted); cursor: pointer; font-size: 1.2rem; }
+        .delete-goal { color: var(--text-muted); cursor: pointer; font-size: 1.2rem; padding: 0 5px; }
         .delete-goal:hover { color: var(--danger); }
 
         /* Courses */
@@ -102,9 +121,12 @@
         iframe { width: 100%; height: 100%; border: none; }
 
         /* Utilities */
-        .btn { padding: 8px 16px; border-radius: 6px; border: 1px solid rgba(27,31,36,0.15); cursor: pointer; font-weight: 600; font-size: 14px; }
+        .btn { padding: 8px 16px; border-radius: 6px; border: 1px solid rgba(27,31,36,0.15); cursor: pointer; font-weight: 600; font-size: 14px; transition: 0.2s; }
         .btn-primary { background: #238636; color: white; border: 1px solid rgba(27,31,36,0.15); }
-        .btn-primary:hover { background: #2ea043; }
+        .btn-primary:hover { background: #2ea043; transform: translateY(-1px); }
+        .btn-complete-active { background: #238636; color: white; }
+        .btn-complete-done { background: #1f6feb; color: white; border-color: #1f6feb; } /* Blue for done */
+        
         .btn-danger { background: transparent; color: var(--danger); border: 1px solid var(--border); }
         .btn-danger:hover { color: white; background: var(--danger); border-color: var(--danger); }
 
@@ -239,7 +261,10 @@
                 </div>
                 <div style="margin-top: 20px; color: var(--text-muted);">
                     <h2 id="video-title" style="color: var(--text-main);">Select Topic</h2>
-                    <p id="video-desc" style="margin-top: 5px;">...</p>
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <p id="video-desc" style="margin-top: 5px;">...</p>
+                        <small id="completion-date" style="color: var(--accent); display: none;"></small>
+                    </div>
                     <button class="btn btn-danger" style="margin-top: 20px;" onclick="deleteCourse()">Delete Entire Course</button>
                 </div>
             </div>
@@ -530,6 +555,7 @@
             else {
                 document.getElementById('video-player').src = '';
                 document.getElementById('video-title').innerText = "No Topic";
+                document.getElementById('mark-btn').style.display = 'none';
             }
         }
 
@@ -555,6 +581,28 @@
             document.getElementById('video-player').src = t.url;
             document.getElementById('video-title').innerText = t.title;
             document.getElementById('video-desc').innerText = t.desc;
+            
+            // Update Completion UI
+            const btn = document.getElementById('mark-btn');
+            const dateEl = document.getElementById('completion-date');
+            btn.style.display = 'block';
+            
+            if (t.completed) {
+                btn.innerHTML = "🎉 Completed";
+                btn.classList.remove('btn-primary');
+                btn.classList.add('btn-complete-done');
+                
+                if(t.completedOn) {
+                    const date = new Date(t.completedOn).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                    dateEl.innerText = `Completed on: ${date}`;
+                    dateEl.style.display = 'block';
+                }
+            } else {
+                btn.innerHTML = "✅ Mark as Completed";
+                btn.classList.add('btn-primary');
+                btn.classList.remove('btn-complete-done');
+                dateEl.style.display = 'none';
+            }
             renderTopics();
         }
 
@@ -565,7 +613,7 @@
             const match = link.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=|shorts\/)([^#&?]*).*/);
             if(match && match[2].length===11) {
                 courses[currentCourseIndex].topics.push({
-                    title, desc, completed: false,
+                    title, desc, completed: false, completedOn: null,
                     url: `https://www.youtube.com/embed/${match[2]}?modestbranding=1&rel=0&loop=1&playlist=${match[2]}`
                 });
                 saveCloudData();
@@ -577,9 +625,11 @@
 
         window.markComplete = () => {
             if(currentTopicIndex > -1) {
-                courses[currentCourseIndex].topics[currentTopicIndex].completed = true;
+                const topic = courses[currentCourseIndex].topics[currentTopicIndex];
+                topic.completed = !topic.completed;
+                topic.completedOn = topic.completed ? new Date().toISOString() : null;
                 saveCloudData();
-                renderTopics();
+                loadTopic(currentTopicIndex); // Refresh UI to show/hide date
             }
         }
         
