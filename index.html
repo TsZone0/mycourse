@@ -347,14 +347,30 @@
             <button class="btn" style="width: 100%; margin-top: 10px;" onclick="document.getElementById('add-topic-modal').style.display='none'">Cancel</button>
         </div>
     </div>
+    
+    <!-- Updated About Modal -->
     <div class="modal" id="about-modal">
-        <div class="modal-content">
-            <h2 style="margin-bottom: 15px; color: var(--accent);">👨‍💻 About Us</h2>
-            <p style="color: var(--text-main); margin-bottom: 15px;">Hello! I am <strong>Shivam</strong>, a 2nd year CSE student. 🎓</p>
-            <p style="color: var(--text-muted);">We created this webpage for students to help them stay consistent.</p>
+        <div class="modal-content" style="width: 500px;">
+            <h2 style="margin-bottom: 20px; color: var(--accent); border-bottom: 1px solid var(--border); padding-bottom: 10px;">👨‍💻 About Us</h2>
+            
+            <p style="color: var(--text-main); font-size: 1.05rem; line-height: 1.6; margin-bottom: 15px;">
+                Hello everyone! I am <strong>Shivam Kumar</strong>, a passionate 2nd-year Computer Science Engineering student at <strong>TIT (Excellence)</strong>. 🎓
+            </p>
+
+            <p style="color: var(--text-muted); line-height: 1.6; margin-bottom: 15px;">
+                My journey into the world of technology has been driven by a single goal: to solve real-world problems using code. As a student myself, I realized that while platforms like YouTube have amazing educational content, they are also filled with distractions. One moment you are learning Data Structures, and the next you are watching funny videos.
+            </p>
+
+            <p style="color: var(--text-muted); line-height: 1.6; margin-bottom: 20px;">
+                That is why I created this <strong>'Pro Study Portal'</strong>. It is a sanctuary for students—a place where you can organize your learning, track your progress with heatmaps, and maintain a focused study streak without the noise. This project is my contribution to helping every student achieve their academic goals with discipline and consistency.
+            </p>
+            
+            <p style="color: var(--accent); font-weight: bold; text-align: center;">"Let's Crack It Together! 🚀"</p>
+
             <button class="btn" style="width: 100%; margin-top: 20px;" onclick="document.getElementById('about-modal').style.display='none'">Close</button>
         </div>
     </div>
+
     <div class="modal" id="contact-modal">
         <div class="modal-content">
             <h2 style="margin-bottom: 20px; color: var(--accent);">📞 Contact Us</h2>
@@ -380,7 +396,7 @@
         } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
-        // --- FIREBASE CONFIG (Keep as is) ---
+        // --- FIREBASE CONFIG ---
         const firebaseConfig = {
             apiKey: "AIzaSyCf-BoHSE_-2YhF7DAbxYXT0cHOprE9rzk",
             authDomain: "mycourse-231f1.firebaseapp.com",
@@ -450,10 +466,10 @@
             document.getElementById('auth-loader').style.display = 'block';
             createUserWithEmailAndPassword(auth, email, pass)
                 .then((result) => {
-                    // Update Display Name
+                    // Update Display Name & Force UI Update
                     updateProfile(result.user, { displayName: name })
                         .then(() => {
-                            // Profile updated, auth state listener will handle redirect
+                            document.getElementById('welcome-msg').innerText = `Welcome back, ${name}! 👋`;
                         });
                 })
                 .catch((error) => {
@@ -486,7 +502,8 @@
                 document.getElementById('main-nav').style.display = 'flex';
                 document.getElementById('main-app').style.display = 'flex';
                 
-                const name = user.displayName ? user.displayName.split(' ')[0] : 'Student';
+                // Show full name here
+                const name = user.displayName || 'Student';
                 document.getElementById('welcome-msg').innerText = `Welcome back, ${name}! 👋`;
                 
                 if(user.photoURL) {
@@ -526,9 +543,6 @@
             setInterval(() => { const today = new Date().toISOString().split('T')[0]; studyData[today] = (studyData[today] || 0) + 10; saveCloudData(); updateStats(); }, 10000);
         }
 
-        // (Rest of the existing functions: renderCourses, loadCourse, addTopic, etc. - No Changes Needed)
-        // ... Insert all previous logic functions here ... 
-        
         // --- THEME ---
         window.toggleTheme = () => {
             const html = document.documentElement;
