@@ -70,13 +70,11 @@
         .login-input:focus { border-color: var(--accent); }
         
         .google-btn {
-            background: white; color: #333; padding: 12px 24px; border-radius: 6px; width: 100%;
+            background: white; color: #333; padding: 10px 24px; border-radius: 6px; width: 100%;
             border: none; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;
             font-size: 0.95rem; transition: 0.2s; margin-top: 15px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
         }
-        .google-btn:hover { opacity: 0.95; background-color: #f8f9fa; }
-        .google-btn img { width: 20px; height: 20px; }
+        .google-btn:hover { opacity: 0.9; }
 
         /* Navbar */
         .navbar {
@@ -200,7 +198,6 @@
     <div id="login-screen">
         <div class="login-card">
             <h1 class="login-header">🎓 Study Portal</h1>
-            <p style="margin-bottom: 15px; color: var(--text-muted);">Environment Auto-Login Enabled</p>
             
             <!-- Toggle Tabs -->
             <div class="login-toggle">
@@ -223,7 +220,7 @@
                 <button class="btn btn-primary" style="width: 100%; margin-top: 10px;" onclick="handleSignUp()">Create Account</button>
             </div>
 
-            <div class="loader" id="auth-loader" style="display: block;"></div>
+            <div class="loader" id="auth-loader"></div>
             <p id="login-error" style="color: var(--danger); margin-top: 20px; display: none; font-size: 0.9rem;"></p>
 
             <!-- Divider -->
@@ -231,7 +228,7 @@
 
             <!-- Google Login -->
             <button class="google-btn" onclick="handleGoogleLogin()">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google Logo">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" width="20" alt="G">
                 Continue with Google
             </button>
         </div>
@@ -258,7 +255,7 @@
 
     <!-- Main App -->
     <div class="app-container" id="main-app">
-        <!-- Dashboard content -->
+        <!-- ... (Dashboard content same as before, shortened for brevity) ... -->
         <div id="home-view">
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <h1 id="welcome-msg" style="font-size: 1.5rem;">Welcome!</h1>
@@ -386,7 +383,7 @@
 
     <!-- FIREBASE & APP LOGIC -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
         import { 
             getAuth, 
             signInWithPopup, 
@@ -395,14 +392,12 @@
             signInWithEmailAndPassword, 
             updateProfile, 
             signOut, 
-            onAuthStateChanged,
-            signInWithCustomToken,
-            signInAnonymously
-        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, onSnapshot, collection } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+            onAuthStateChanged 
+        } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
         // --- FIREBASE CONFIG ---
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
+        const firebaseConfig = {
             apiKey: "AIzaSyCf-BoHSE_-2YhF7DAbxYXT0cHOprE9rzk",
             authDomain: "mycourse-231f1.firebaseapp.com",
             projectId: "mycourse-231f1",
@@ -410,8 +405,6 @@
             messagingSenderId: "519848272346",
             appId: "1:519848272346:android:b495935905823e921920e3" 
         };
-
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app';
 
         let app, auth, db, user;
         try {
@@ -423,22 +416,6 @@
         // --- STATE ---
         let courses = [], studyData = {}, dailyGoals = [];
         let currentCourseIndex = -1, currentTopicIndex = -1, sessionSeconds = 0, isSaving = false;
-        let dataUnsubscribe = null; // For cleaning up listener
-
-        // --- AUTH INITIALIZATION ---
-        const initAuth = async () => {
-            try {
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    await signInWithCustomToken(auth, __initial_auth_token);
-                } else {
-                   // Fallback
-                }
-            } catch (error) {
-                console.error("Auth Error:", error);
-                showAuthError(error.message);
-            }
-        };
-        initAuth();
 
         // --- AUTH UI TOGGLE ---
         window.toggleAuthMode = (mode) => {
@@ -464,15 +441,21 @@
         }
 
         // --- AUTH ACTIONS ---
+        
+        // 1. Email Login
         window.handleEmailLogin = () => {
             const email = document.getElementById('login-email').value;
             const pass = document.getElementById('login-pass').value;
             if(!email || !pass) return alert("Please enter all fields");
 
             document.getElementById('auth-loader').style.display = 'block';
-            signInWithEmailAndPassword(auth, email, pass).catch((error) => showAuthError(error.message));
+            signInWithEmailAndPassword(auth, email, pass)
+                .catch((error) => {
+                    showAuthError(error.message);
+                });
         }
 
+        // 2. Sign Up
         window.handleSignUp = () => {
             const name = document.getElementById('signup-name').value;
             const email = document.getElementById('signup-email').value;
@@ -483,15 +466,23 @@
             document.getElementById('auth-loader').style.display = 'block';
             createUserWithEmailAndPassword(auth, email, pass)
                 .then((result) => {
+                    // Update Display Name & Force UI Update
                     updateProfile(result.user, { displayName: name })
-                        .then(() => { document.getElementById('welcome-msg').innerText = `Welcome back, ${name}! 👋`; });
+                        .then(() => {
+                            document.getElementById('welcome-msg').innerText = `Welcome back, ${name}! 👋`;
+                        });
                 })
-                .catch((error) => showAuthError(error.message));
+                .catch((error) => {
+                    showAuthError(error.message);
+                });
         }
 
+        // 3. Google Login
         window.handleGoogleLogin = () => {
             document.getElementById('auth-loader').style.display = 'block';
-            signInWithPopup(auth, new GoogleAuthProvider()).catch(e => showAuthError(e.message));
+            signInWithPopup(auth, new GoogleAuthProvider()).catch(e => {
+                showAuthError(e.message);
+            });
         }
 
         function showAuthError(msg) {
@@ -511,6 +502,7 @@
                 document.getElementById('main-nav').style.display = 'flex';
                 document.getElementById('main-app').style.display = 'flex';
                 
+                // Show full name here
                 const name = user.displayName || 'Student';
                 document.getElementById('welcome-msg').innerText = `Welcome back, ${name}! 👋`;
                 
@@ -518,72 +510,37 @@
                     document.getElementById('user-pic').src = user.photoURL;
                     document.getElementById('user-pic').style.display = 'block';
                 }
-                // Setup real-time data listener
-                setupDataListener();
+                await loadCloudData();
                 initApp();
             } else {
                 document.getElementById('login-screen').style.display = 'flex';
-                if(dataUnsubscribe) dataUnsubscribe();
             }
         });
 
-        // --- CLOUD & APP LOGIC (FIXED RESET ISSUE) ---
-        function setupDataListener() {
-            if (dataUnsubscribe) dataUnsubscribe();
+        // --- CLOUD & APP LOGIC (Same as before) ---
+        async function loadCloudData() {
             try {
-                // Using onSnapshot for Real-time updates so data is always sync
-                const docRef = doc(db, 'artifacts', appId, 'users', user.uid, 'data', 'profile');
-                dataUnsubscribe = onSnapshot(docRef, (docSnap) => {
-                    if (docSnap.exists()) {
-                        const data = docSnap.data();
-                        // Only update if we are not currently saving to avoid conflict loop
-                        if (!isSaving) {
-                            courses = data.courses || [];
-                            studyData = data.studyData || {};
-                            dailyGoals = data.dailyGoals || [];
-                            renderCourses(); // Re-render in case of external update
-                            renderHeatmap();
-                            renderGoals();
-                            updateStats();
-                        }
-                    } else {
-                        // No data yet, initialize
-                        courses = []; studyData = {}; dailyGoals = [];
-                        saveCloudData();
-                    }
-                }, (error) => {
-                    console.error("Data fetch error:", error);
-                });
-            } catch (e) { console.error("Listener Setup Error", e); }
+                const snap = await getDoc(doc(db, "users", user.uid));
+                if (snap.exists()) {
+                    const data = snap.data();
+                    courses = data.courses || []; studyData = data.studyData || {}; dailyGoals = data.dailyGoals || [];
+                } else {
+                    courses = []; studyData = {}; dailyGoals = []; saveCloudData();
+                }
+            } catch (e) { console.error("Load error", e); }
         }
 
         async function saveCloudData() {
             if (!user || isSaving) return;
-            // Safety check: Don't save if data is empty to prevent overwrite on load fail
-            if (Object.keys(studyData).length === 0 && courses.length === 0 && sessionSeconds > 5) {
-                // Proceed only if it's a fresh start, otherwise might be risk
-            }
-            
             isSaving = true;
-            try { 
-                await setDoc(doc(db, 'artifacts', appId, 'users', user.uid, 'data', 'profile'), { courses, studyData, dailyGoals }, { merge: true }); 
-                console.log("Saved successfully");
-            } catch(e) { console.error("Save error", e); }
+            try { await setDoc(doc(db, "users", user.uid), { courses, studyData, dailyGoals }, { merge: true }); } catch(e) {}
             isSaving = false;
         }
 
         function initApp() {
-            // Initial render handled by snapshot listener mostly
+            renderCourses(); renderHeatmap(); renderGoals(); updateStats();
             setInterval(() => { sessionSeconds++; updateTimer(); }, 1000);
-            // Auto-save every 10 seconds
-            setInterval(() => { 
-                if(user) {
-                    const today = new Date().toISOString().split('T')[0];
-                    studyData[today] = (studyData[today] || 0) + 10; 
-                    saveCloudData(); 
-                    updateStats(); 
-                }
-            }, 10000);
+            setInterval(() => { const today = new Date().toISOString().split('T')[0]; studyData[today] = (studyData[today] || 0) + 10; saveCloudData(); updateStats(); }, 10000);
         }
 
         // --- THEME ---
@@ -599,7 +556,7 @@
         document.documentElement.setAttribute('data-theme', savedTheme);
         document.addEventListener('DOMContentLoaded', () => document.getElementById('theme-icon').innerText = savedTheme === 'light' ? '☀️' : '🌙');
 
-        // --- LOGIC FUNCTIONS ---
+        // --- LOGIC FUNCTIONS (Copied for completeness) ---
         window.openCreateModal = () => document.getElementById('create-course-modal').style.display='flex';
         window.createNewCourse = () => {
             const name = document.getElementById('new-course-name').value;
