@@ -15,7 +15,7 @@
             --accent: #58a6ff;
             --success: #238636;
             --danger: #da3633;
-            --pink-text: #ff79c6; /* New Pink Color */
+            --pink-text: #ff79c6;
             --border: #30363d;
         }
 
@@ -61,13 +61,12 @@
         .stat-value { font-size: 2rem; font-weight: bold; color: var(--text-main); display: block; margin: 5px 0; }
         .stat-label { color: var(--text-muted); font-size: 0.85rem; }
 
-        /* UPDATED Heatmap (Month-wise) */
+        /* Heatmap */
         .heatmap-card { background: var(--card-bg); border: 1px solid var(--border); padding: 20px; border-radius: 6px; }
         .heatmap-container { display: flex; flex-wrap: wrap; gap: 20px; }
         .heatmap-month { display: flex; flex-direction: column; gap: 5px; }
         .heatmap-month-label { font-size: 0.8rem; color: var(--text-muted); font-weight: bold; }
         .heatmap-month-grid { display: grid; grid-template-columns: repeat(7, 10px); gap: 3px; }
-        
         .heatmap-cell { width: 10px; height: 10px; border-radius: 2px; background: #161b22; border: 1px solid #282e36; }
         .h-l0 { background: #161b22; }
         .h-l1 { background: #0e4429; border-color: #0e4429; }
@@ -75,20 +74,14 @@
         .h-l3 { background: #26a641; border-color: #26a641; }
         .h-l4 { background: #39d353; border-color: #39d353; }
 
-        /* Daily Goals Styled Input */
+        /* Daily Goals */
         .goals-card { background: var(--card-bg); border: 1px solid var(--border); padding: 20px; border-radius: 6px; flex: 1; }
         .goal-input-group { display: flex; gap: 10px; margin-bottom: 15px; }
-        
-        .goal-input-group input {
-            flex: 1; padding: 10px 15px; background: #0d1117; border: 1px solid var(--border); border-radius: 6px;
-            color: var(--text-main); outline: none; font-size: 0.95rem; transition: border-color 0.2s;
-        }
+        .goal-input-group input { flex: 1; padding: 10px 15px; background: #0d1117; border: 1px solid var(--border); border-radius: 6px; color: var(--text-main); outline: none; font-size: 0.95rem; transition: border-color 0.2s; }
         .goal-input-group input:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(88, 166, 255, 0.2); }
-
         .goal-list { list-style: none; max-height: 300px; overflow-y: auto; }
         .goal-item { display: flex; align-items: center; gap: 10px; padding: 12px; border-bottom: 1px solid var(--border); transition: background 0.2s; }
         .goal-item:hover { background: rgba(255,255,255,0.02); }
-        .goal-item:last-child { border-bottom: none; }
         .goal-checkbox { width: 18px; height: 18px; accent-color: var(--success); cursor: pointer; }
         .goal-text { flex: 1; }
         .goal-done .goal-text { text-decoration: line-through; color: var(--text-muted); }
@@ -104,40 +97,32 @@
         /* Sidebar & Player */
         #course-view { display: none; width: 100%; height: 100%; }
         .sidebar { width: 300px; background: var(--sidebar-bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; }
-        .main-content { flex: 1; padding: 40px; background: var(--bg-dark); overflow-y: auto; }
+        .main-content { flex: 1; padding: 40px; background: var(--bg-dark); overflow-y: auto; display: flex; flex-direction: column; }
         
-        /* UPDATED Topic Item Style */
         .topic-item { padding: 12px; margin-bottom: 5px; border-radius: 6px; cursor: pointer; display: flex; justify-content: space-between; font-size: 0.9rem; color: var(--text-muted); transition: 0.2s; border: 1px solid transparent; }
         .topic-item:hover { background: #21262d; color: var(--text-main); }
         .topic-item.active { background: #1f6feb; color: white; }
-        
-        /* Green Box + Pink Text for Completed */
-        .topic-item.completed { 
-            background-color: var(--success) !important; 
-            color: var(--pink-text) !important; 
-            font-weight: bold;
-            border: 1px solid #2ea043;
-        }
+        .topic-item.completed { background-color: var(--success) !important; color: var(--pink-text) !important; font-weight: bold; border: 1px solid #2ea043; }
         
         .cinema-container { width: 100%; max-width: 900px; aspect-ratio: 16/9; background: #000; border-radius: 6px; margin-bottom: 20px; border: 1px solid var(--border); }
         iframe { width: 100%; height: 100%; border: none; }
+
+        /* Note Section Style */
+        .notes-section { width: 100%; max-width: 900px; margin-top: 30px; background: var(--card-bg); padding: 20px; border-radius: 10px; border: 1px solid var(--border); }
+        .notes-section h3 { font-size: 1.1rem; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
+        .notes-area { width: 100%; height: 200px; background: #0d1117; border: 1px solid var(--border); color: var(--text-main); padding: 15px; border-radius: 6px; resize: vertical; font-size: 0.95rem; line-height: 1.5; font-family: 'Courier New', Courier, monospace; }
+        .notes-area:focus { border-color: var(--accent); outline: none; }
 
         /* Utilities */
         .btn { padding: 8px 16px; border-radius: 6px; border: 1px solid rgba(27,31,36,0.15); cursor: pointer; font-weight: 600; font-size: 14px; transition: 0.2s; }
         .btn-primary { background: #238636; color: white; border: 1px solid rgba(27,31,36,0.15); }
         .btn-primary:hover { background: #2ea043; transform: translateY(-1px); }
-        
-        /* UPDATED Mark Button Style */
-        .btn-complete-active { background: #238636; color: white; }
-        .btn-complete-done { 
-            background-color: var(--success) !important; 
-            color: var(--pink-text) !important; 
-            border-color: #2ea043;
-            font-weight: bold;
-        }
-        
+        .btn-complete-done { background-color: var(--success) !important; color: var(--pink-text) !important; border-color: #2ea043; font-weight: bold; }
         .btn-danger { background: transparent; color: var(--danger); border: 1px solid var(--border); }
         .btn-danger:hover { color: white; background: var(--danger); border-color: var(--danger); }
+
+        /* Footer */
+        .app-footer { text-align: center; padding: 20px; margin-top: auto; color: var(--text-muted); font-size: 0.85rem; border-top: 1px solid var(--border); background: var(--nav-bg); }
 
         /* Modals */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 100; justify-content: center; align-items: center; }
@@ -157,7 +142,7 @@
     <!-- Login Screen -->
     <div id="login-screen">
         <h1 style="margin-bottom: 20px;">🎓 My Study Portal</h1>
-        <p style="color: var(--text-muted); margin-bottom: 40px;">Login to sync your consistency & goals.</p>
+        <p style="color: var(--text-muted); margin-bottom: 40px;">Login to sync your notes & progress.</p>
         <button class="google-btn" onclick="handleLogin()">
             <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" width="20" alt="G">
             Sign in with Google
@@ -192,9 +177,7 @@
             </div>
             
             <div class="dashboard-row">
-                <!-- Left Col: Heatmap & Courses -->
                 <div class="dashboard-col" style="flex: 2;">
-                    <!-- Stats -->
                     <div class="stats-grid">
                         <div class="stat-card">
                             <span class="stat-label">Study Today</span>
@@ -206,12 +189,9 @@
                         </div>
                     </div>
 
-                    <!-- Heatmap (Month-wise) -->
                     <div class="heatmap-card">
                         <h3 style="margin-bottom: 15px; font-size: 1rem;">Study Consistency (Last 12 Months)</h3>
-                        <div class="heatmap-container" id="heatmap-grid">
-                            <!-- Months injected here via JS -->
-                        </div>
+                        <div class="heatmap-container" id="heatmap-grid"></div>
                         <div style="display: flex; gap: 5px; align-items: center; margin-top: 15px; font-size: 0.75rem; color: var(--text-muted);">
                             <span>Less</span>
                             <div class="heatmap-cell h-l0"></div>
@@ -223,7 +203,6 @@
                         </div>
                     </div>
 
-                    <!-- Courses -->
                     <h3 style="margin-top: 10px; font-size: 1.2rem;">My Courses</h3>
                     <div class="courses-grid" id="courses-grid">
                         <div class="course-card add-new" onclick="openCreateModal()">
@@ -233,7 +212,6 @@
                     </div>
                 </div>
 
-                <!-- Right Col: Daily Goals -->
                 <div class="dashboard-col" style="flex: 1;">
                     <div class="goals-card">
                         <h3 style="margin-bottom: 15px; font-size: 1rem;">🎯 Daily Goals</h3>
@@ -241,9 +219,7 @@
                             <input type="text" id="new-goal-input" placeholder="Add a task..." onkeypress="if(event.key==='Enter') addGoal()">
                             <button class="btn btn-primary" onclick="addGoal()">Add</button>
                         </div>
-                        <ul class="goal-list" id="goal-list">
-                            <!-- Goals injected here -->
-                        </ul>
+                        <ul class="goal-list" id="goal-list"></ul>
                     </div>
                 </div>
             </div>
@@ -260,30 +236,45 @@
                 </div>
                 <div class="topic-list" id="topic-list" style="padding: 10px;"></div>
             </div>
+            
             <div class="main-content">
-                <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
-                    <button class="btn" onclick="switchView('home')">← Dashboard</button>
-                    <button class="btn btn-primary" onclick="document.getElementById('add-topic-modal').style.display='flex'">+ Add Topic</button>
-                </div>
-                <div class="cinema-container"><iframe id="video-player" src="" allowfullscreen></iframe></div>
-                <div style="display: flex; gap: 10px; align-items: center;">
-                    <button id="mark-btn" class="btn btn-primary" style="flex:1; padding: 12px;" onclick="markComplete()">✅ Mark as Completed</button>
-                    <button class="btn btn-danger" onclick="deleteTopic()" style="padding: 12px;">🗑️</button>
-                </div>
-                <div style="margin-top: 20px; color: var(--text-muted);">
-                    <h2 id="video-title" style="color: var(--text-main);">Select Topic</h2>
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                        <p id="video-desc" style="margin-top: 5px;">...</p>
+                <div style="flex: 1;"> <!-- Wrapper for content to push footer down -->
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+                        <button class="btn" onclick="switchView('home')">← Dashboard</button>
+                        <button class="btn btn-primary" onclick="document.getElementById('add-topic-modal').style.display='flex'">+ Add Topic</button>
+                    </div>
+                    <div class="cinema-container"><iframe id="video-player" src="" allowfullscreen></iframe></div>
+                    
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <button id="mark-btn" class="btn btn-primary" style="flex:1; padding: 12px;" onclick="markComplete()">✅ Mark as Completed</button>
+                        <button class="btn btn-danger" onclick="deleteTopic()" style="padding: 12px;">🗑️</button>
+                    </div>
+                    <div style="margin-top: 10px; display: flex; justify-content: space-between;">
+                        <h2 id="video-title" style="color: var(--text-main);">Select Topic</h2>
                         <small id="completion-date" style="color: var(--pink-text); display: none;"></small>
                     </div>
-                    <button class="btn btn-danger" style="margin-top: 20px;" onclick="deleteCourse()">Delete Entire Course</button>
+                    <p id="video-desc" style="color: var(--text-muted); margin-top: 5px; margin-bottom: 20px;">...</p>
+
+                    <!-- NEW: NOTES SECTION -->
+                    <div class="notes-section">
+                        <h3>📝 Lecture Notes <span id="save-status" style="margin-left: auto; font-size: 0.8rem; color: var(--success);"></span></h3>
+                        <textarea id="topic-notes" class="notes-area" placeholder="Write your key points here... (Don't forget to save!)"></textarea>
+                        <button class="btn btn-primary" style="margin-top: 10px;" onclick="saveCurrentNote()">Save Note</button>
+                    </div>
+                    
+                    <button class="btn btn-danger" style="margin-top: 40px;" onclick="deleteCourse()">Delete Entire Course</button>
+                </div>
+
+                <!-- FOOTER -->
+                <div class="app-footer">
+                    &copy; 2025 Copyright by <strong>Shivam Kumar (TIT(Excellence))</strong>
                 </div>
             </div>
         </div>
 
     </div>
 
-    <!-- Modals -->
+    <!-- Modals (Create, Add Topic, About, Contact) - Same as before -->
     <div class="modal" id="create-course-modal">
         <div class="modal-content">
             <h2>New Course</h2>
@@ -304,16 +295,11 @@
         </div>
     </div>
 
-    <!-- New Modals: About & Contact -->
     <div class="modal" id="about-modal">
         <div class="modal-content">
             <h2 style="margin-bottom: 15px; color: var(--accent);">👨‍💻 About Us</h2>
-            <p style="color: var(--text-main); margin-bottom: 15px; font-size: 1.1rem;">
-                Hello! I am <strong>Shivam</strong>, a 2nd year CSE student. 🎓
-            </p>
-            <p style="color: var(--text-muted); line-height: 1.6;">
-                We created this webpage for students to help them stay consistent and focused. This portal allows you to organize your YouTube learning, track your daily progress, and maintain a study streak without distractions.
-            </p>
+            <p style="color: var(--text-main); margin-bottom: 15px; font-size: 1.1rem;">Hello! I am <strong>Shivam</strong>, a 2nd year CSE student. 🎓</p>
+            <p style="color: var(--text-muted); line-height: 1.6;">We created this webpage for students to help them stay consistent and focused.</p>
             <button class="btn" style="width: 100%; margin-top: 20px;" onclick="document.getElementById('about-modal').style.display='none'">Close</button>
         </div>
     </div>
@@ -321,31 +307,18 @@
     <div class="modal" id="contact-modal">
         <div class="modal-content">
             <h2 style="margin-bottom: 20px; color: var(--accent);">📞 Contact Us</h2>
-            
             <a href="mailto:tszone@zohomail.in" class="contact-link">
                 <span style="font-size: 1.5rem;">📧</span>
-                <div>
-                    <div style="font-size: 0.8rem; color: var(--text-muted);">Email</div>
-                    <div style="font-weight: bold;">tszone@zohomail.in</div>
-                </div>
+                <div><div style="font-size: 0.8rem; color: var(--text-muted);">Email</div><div style="font-weight: bold;">tszone@zohomail.in</div></div>
             </a>
-
             <a href="#" target="_blank" class="contact-link">
                 <span style="font-size: 1.5rem;">💼</span>
-                <div>
-                    <div style="font-size: 0.8rem; color: var(--text-muted);">LinkedIn</div>
-                    <div style="font-weight: bold;">Connect with Shivam</div>
-                </div>
+                <div><div style="font-size: 0.8rem; color: var(--text-muted);">LinkedIn</div><div style="font-weight: bold;">Connect with Shivam</div></div>
             </a>
-
             <a href="#" target="_blank" class="contact-link">
                 <span style="font-size: 1.5rem;">📸</span>
-                <div>
-                    <div style="font-size: 0.8rem; color: var(--text-muted);">Instagram</div>
-                    <div style="font-weight: bold;">Follow for Updates</div>
-                </div>
+                <div><div style="font-size: 0.8rem; color: var(--text-muted);">Instagram</div><div style="font-weight: bold;">Follow for Updates</div></div>
             </a>
-
             <button class="btn" style="width: 100%; margin-top: 20px;" onclick="document.getElementById('contact-modal').style.display='none'">Close</button>
         </div>
     </div>
@@ -356,7 +329,6 @@
         import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
-        // --- FIREBASE CONFIG (Same as before) ---
         const firebaseConfig = {
             apiKey: "AIzaSyCf-BoHSE_-2YhF7DAbxYXT0cHOprE9rzk",
             authDomain: "mycourse-231f1.firebaseapp.com",
@@ -373,7 +345,6 @@
             db = getFirestore(app);
         } catch (e) { console.error("Firebase Init Error", e); }
 
-        // --- STATE ---
         let courses = [];
         let studyData = {};
         let dailyGoals = [];
@@ -382,7 +353,6 @@
         let sessionSeconds = 0;
         let isSaving = false;
 
-        // --- AUTH ---
         window.handleLogin = () => {
             document.getElementById('auth-loader').style.display = 'block';
             signInWithPopup(auth, new GoogleAuthProvider()).catch(e => {
@@ -409,7 +379,6 @@
             }
         });
 
-        // --- CLOUD ---
         async function loadCloudData() {
             try {
                 const snap = await getDoc(doc(db, "users", user.uid));
@@ -419,10 +388,7 @@
                     studyData = data.studyData || {};
                     dailyGoals = data.dailyGoals || [];
                 } else {
-                    courses = [];
-                    studyData = {};
-                    dailyGoals = [];
-                    saveCloudData();
+                    courses = []; studyData = {}; dailyGoals = []; saveCloudData();
                 }
             } catch (e) { console.error("Load error", e); }
         }
@@ -436,7 +402,6 @@
             isSaving = false;
         }
 
-        // --- APP INIT ---
         function initApp() {
             renderCourses();
             renderHeatmap();
@@ -451,48 +416,45 @@
             }, 10000);
         }
 
-        // --- UPDATED HEATMAP (Month-wise) ---
+        // --- NOTES LOGIC ---
+        window.saveCurrentNote = () => {
+            if(currentTopicIndex > -1 && currentCourseIndex > -1) {
+                const noteContent = document.getElementById('topic-notes').value;
+                courses[currentCourseIndex].topics[currentTopicIndex].notes = noteContent;
+                
+                saveCloudData();
+                
+                const status = document.getElementById('save-status');
+                status.innerText = "Saved to Cloud ✅";
+                setTimeout(() => status.innerText = "", 2000);
+            }
+        }
+
         function renderHeatmap() {
             const container = document.getElementById('heatmap-grid');
             container.innerHTML = '';
-            
             const today = new Date();
-            // Loop last 12 months
             for (let i = 11; i >= 0; i--) {
                 const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
                 const monthName = d.toLocaleString('default', { month: 'short' });
                 const year = d.getFullYear();
                 const daysInMonth = new Date(year, d.getMonth() + 1, 0).getDate();
-
-                // Month Wrapper
                 const monthDiv = document.createElement('div');
                 monthDiv.className = 'heatmap-month';
-
-                // Label
                 const label = document.createElement('div');
                 label.className = 'heatmap-month-label';
                 label.innerText = `${monthName}`;
                 monthDiv.appendChild(label);
-
-                // Grid
                 const grid = document.createElement('div');
                 grid.className = 'heatmap-month-grid';
-                
                 for(let day = 1; day <= daysInMonth; day++) {
                     const dateStr = `${year}-${String(d.getMonth()+1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
                     const seconds = studyData[dateStr] || 0;
                     const mins = seconds / 60;
-
                     const cell = document.createElement('div');
                     cell.className = 'heatmap-cell';
                     cell.title = `${dateStr}: ${Math.round(mins)} mins`;
-                    
-                    if (mins > 120) cell.classList.add('h-l4');
-                    else if (mins > 60) cell.classList.add('h-l3');
-                    else if (mins > 30) cell.classList.add('h-l2');
-                    else if (mins > 0) cell.classList.add('h-l1');
-                    else cell.classList.add('h-l0');
-
+                    if (mins > 120) cell.classList.add('h-l4'); else if (mins > 60) cell.classList.add('h-l3'); else if (mins > 30) cell.classList.add('h-l2'); else if (mins > 0) cell.classList.add('h-l1'); else cell.classList.add('h-l0');
                     grid.appendChild(cell);
                 }
                 monthDiv.appendChild(grid);
@@ -503,25 +465,10 @@
         window.addGoal = () => {
             const input = document.getElementById('new-goal-input');
             const txt = input.value.trim();
-            if (txt) {
-                dailyGoals.push({ text: txt, done: false });
-                saveCloudData();
-                renderGoals();
-                input.value = '';
-            }
+            if (txt) { dailyGoals.push({ text: txt, done: false }); saveCloudData(); renderGoals(); input.value = ''; }
         }
-
-        window.toggleGoal = (idx) => {
-            dailyGoals[idx].done = !dailyGoals[idx].done;
-            saveCloudData();
-            renderGoals();
-        }
-
-        window.deleteGoal = (idx) => {
-            dailyGoals.splice(idx, 1);
-            saveCloudData();
-            renderGoals();
-        }
+        window.toggleGoal = (idx) => { dailyGoals[idx].done = !dailyGoals[idx].done; saveCloudData(); renderGoals(); }
+        window.deleteGoal = (idx) => { dailyGoals.splice(idx, 1); saveCloudData(); renderGoals(); }
 
         function renderGoals() {
             const list = document.getElementById('goal-list');
@@ -534,13 +481,11 @@
             });
         }
 
-        // --- EXISTING LOGIC ---
         function updateTimer() {
             const m = Math.floor(sessionSeconds/60);
             const s = sessionSeconds%60;
             document.getElementById('session-timer').innerText = `${m}:${s<10?'0'+s:s}`;
         }
-
         function updateStats() {
             const today = new Date().toISOString().split('T')[0];
             const tSec = studyData[today] || 0;
@@ -553,12 +498,7 @@
         window.openCreateModal = () => document.getElementById('create-course-modal').style.display='flex';
         window.createNewCourse = () => {
             const name = document.getElementById('new-course-name').value;
-            if(name) {
-                courses.push({ name, topics: [] });
-                saveCloudData();
-                renderCourses();
-                document.getElementById('create-course-modal').style.display='none';
-            }
+            if(name) { courses.push({ name, topics: [] }); saveCloudData(); renderCourses(); document.getElementById('create-course-modal').style.display='none'; }
         }
 
         function renderCourses() {
@@ -585,6 +525,7 @@
                 document.getElementById('video-player').src = '';
                 document.getElementById('video-title').innerText = "No Topic";
                 document.getElementById('mark-btn').style.display = 'none';
+                document.getElementById('topic-notes').value = "";
             }
         }
 
@@ -596,7 +537,6 @@
             t.forEach((topic, i) => {
                 if(topic.completed) done++;
                 const div = document.createElement('div');
-                // Check for completed state and add class
                 div.className = `topic-item ${i===currentTopicIndex?'active':''} ${topic.completed?'completed':''}`;
                 div.innerHTML = `<span>${i+1}. ${topic.title}</span><span>${topic.completed?'✓':''}</span>`;
                 div.onclick = () => loadTopic(i);
@@ -612,7 +552,10 @@
             document.getElementById('video-title').innerText = t.title;
             document.getElementById('video-desc').innerText = t.desc;
             
-            // Update Completion UI
+            // Load Notes
+            document.getElementById('topic-notes').value = t.notes || "";
+            document.getElementById('save-status').innerText = "";
+
             const btn = document.getElementById('mark-btn');
             const dateEl = document.getElementById('completion-date');
             btn.style.display = 'block';
@@ -621,7 +564,6 @@
                 btn.innerHTML = "🎉 Completed";
                 btn.classList.remove('btn-primary');
                 btn.classList.add('btn-complete-done');
-                
                 if(t.completedOn) {
                     const date = new Date(t.completedOn).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
                     dateEl.innerText = `Completed on: ${date}`;
@@ -633,7 +575,7 @@
                 btn.classList.remove('btn-complete-done');
                 dateEl.style.display = 'none';
             }
-            renderTopics(); // Re-render sidebar to show green/pink style
+            renderTopics();
         }
 
         window.addTopic = () => {
@@ -643,7 +585,7 @@
             const match = link.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=|shorts\/)([^#&?]*).*/);
             if(match && match[2].length===11) {
                 courses[currentCourseIndex].topics.push({
-                    title, desc, completed: false, completedOn: null,
+                    title, desc, completed: false, completedOn: null, notes: "",
                     url: `https://www.youtube.com/embed/${match[2]}?modestbranding=1&rel=0&loop=1&playlist=${match[2]}`
                 });
                 saveCloudData();
@@ -659,7 +601,7 @@
                 topic.completed = !topic.completed;
                 topic.completedOn = topic.completed ? new Date().toISOString() : null;
                 saveCloudData();
-                loadTopic(currentTopicIndex); // Refresh UI
+                loadTopic(currentTopicIndex);
             }
         }
         
@@ -688,7 +630,6 @@
             document.getElementById('nav-course').classList.toggle('active', v==='course');
             if(v==='home') renderCourses();
         }
-
     </script>
 </body>
 </html>
