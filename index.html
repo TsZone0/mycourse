@@ -198,6 +198,7 @@
     <div id="login-screen">
         <div class="login-card">
             <h1 class="login-header">🎓 Study Portal</h1>
+            <p style="margin-bottom: 15px; color: var(--text-muted);">Environment Auto-Login Enabled</p>
             
             <!-- Toggle Tabs -->
             <div class="login-toggle">
@@ -220,7 +221,7 @@
                 <button class="btn btn-primary" style="width: 100%; margin-top: 10px;" onclick="handleSignUp()">Create Account</button>
             </div>
 
-            <div class="loader" id="auth-loader"></div>
+            <div class="loader" id="auth-loader" style="display: block;"></div>
             <p id="login-error" style="color: var(--danger); margin-top: 20px; display: none; font-size: 0.9rem;"></p>
 
             <!-- Divider -->
@@ -255,7 +256,7 @@
 
     <!-- Main App -->
     <div class="app-container" id="main-app">
-        <!-- ... (Dashboard content same as before, shortened for brevity) ... -->
+        <!-- Dashboard content -->
         <div id="home-view">
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <h1 id="welcome-msg" style="font-size: 1.5rem;">Welcome!</h1>
@@ -383,7 +384,7 @@
 
     <!-- FIREBASE & APP LOGIC -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { 
             getAuth, 
             signInWithPopup, 
@@ -392,12 +393,17 @@
             signInWithEmailAndPassword, 
             updateProfile, 
             signOut, 
-            onAuthStateChanged 
-        } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+            onAuthStateChanged,
+            signInWithCustomToken,
+            signInAnonymously
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, collection } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // --- FIREBASE CONFIG ---
-        const firebaseConfig = {
+        // Using the config provided in the snippet, assuming it is correct for the user's project.
+        // In this specific environment, we usually inject a config, but we'll use what was provided 
+        // and mix in the environment variable appId if available.
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
             apiKey: "AIzaSyCf-BoHSE_-2YhF7DAbxYXT0cHOprE9rzk",
             authDomain: "mycourse-231f1.firebaseapp.com",
             projectId: "mycourse-231f1",
@@ -405,6 +411,9 @@
             messagingSenderId: "519848272346",
             appId: "1:519848272346:android:b495935905823e921920e3" 
         };
+
+        // Environment ID for path segmentation (Important for Multi-tenant environments)
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app';
 
         let app, auth, db, user;
         try {
@@ -416,6 +425,23 @@
         // --- STATE ---
         let courses = [], studyData = {}, dailyGoals = [];
         let currentCourseIndex = -1, currentTopicIndex = -1, sessionSeconds = 0, isSaving = false;
+
+        // --- AUTH INITIALIZATION (REQUIRED FOR ENVIRONMENT) ---
+        const initAuth = async () => {
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                   // Fallback for local/non-preview usage
+                   // console.log("No custom token found, waiting for manual login.");
+                }
+            } catch (error) {
+                console.error("Auth Error:", error);
+                showAuthError(error.message);
+            }
+        };
+        initAuth();
+
 
         // --- AUTH UI TOGGLE ---
         window.toggleAuthMode = (mode) => {
@@ -517,10 +543,12 @@
             }
         });
 
-        // --- CLOUD & APP LOGIC (Same as before) ---
+        // --- CLOUD & APP LOGIC (Updated Paths for Compliance) ---
         async function loadCloudData() {
             try {
-                const snap = await getDoc(doc(db, "users", user.uid));
+                // UPDATED PATH: /artifacts/{appId}/users/{userId}/data/profile
+                // This ensures compliance with the environment's security rules.
+                const snap = await getDoc(doc(db, 'artifacts', appId, 'users', user.uid, 'data', 'profile'));
                 if (snap.exists()) {
                     const data = snap.data();
                     courses = data.courses || []; studyData = data.studyData || {}; dailyGoals = data.dailyGoals || [];
@@ -533,7 +561,12 @@
         async function saveCloudData() {
             if (!user || isSaving) return;
             isSaving = true;
-            try { await setDoc(doc(db, "users", user.uid), { courses, studyData, dailyGoals }, { merge: true }); } catch(e) {}
+            try { 
+                // UPDATED PATH for saving
+                await setDoc(doc(db, 'artifacts', appId, 'users', user.uid, 'data', 'profile'), { courses, studyData, dailyGoals }, { merge: true }); 
+            } catch(e) {
+                console.error("Save error", e);
+            }
             isSaving = false;
         }
 
@@ -754,4 +787,3 @@
     </script>
 </body>
 </html>
-
