@@ -41,7 +41,7 @@
             display: none; align-items: center; justify-content: space-between; padding: 0 25px; z-index: 50;
         }
         .nav-links { display: flex; gap: 20px; height: 100%; }
-        .nav-item { display: flex; align-items: center; cursor: pointer; color: var(--text-muted); padding: 0 10px; font-weight: 600; }
+        .nav-item { display: flex; align-items: center; cursor: pointer; color: var(--text-muted); padding: 0 10px; font-weight: 600; transition: 0.2s; }
         .nav-item:hover { color: var(--text-main); }
         .nav-item.active { color: var(--text-main); border-bottom: 2px solid var(--accent); }
 
@@ -66,10 +66,10 @@
         .heatmap-col { display: flex; flex-direction: column; gap: 3px; }
         .heatmap-cell { width: 12px; height: 12px; border-radius: 2px; background: #161b22; border: 1px solid #282e36; }
         .h-l0 { background: #161b22; }
-        .h-l1 { background: #0e4429; border-color: #0e4429; } /* < 15m */
-        .h-l2 { background: #006d32; border-color: #006d32; } /* < 30m */
-        .h-l3 { background: #26a641; border-color: #26a641; } /* < 1h */
-        .h-l4 { background: #39d353; border-color: #39d353; } /* > 1h */
+        .h-l1 { background: #0e4429; border-color: #0e4429; }
+        .h-l2 { background: #006d32; border-color: #006d32; }
+        .h-l3 { background: #26a641; border-color: #26a641; }
+        .h-l4 { background: #39d353; border-color: #39d353; }
 
         /* Daily Goals */
         .goals-card { background: var(--card-bg); border: 1px solid var(--border); padding: 20px; border-radius: 6px; flex: 1; }
@@ -89,7 +89,7 @@
         .course-card:hover { border-color: var(--accent); }
         .add-new { border: 1px dashed var(--text-muted); display: flex; align-items: center; justify-content: center; flex-direction: column; background: transparent; }
 
-        /* Sidebar & Player (Course View) */
+        /* Sidebar & Player */
         #course-view { display: none; width: 100%; height: 100%; }
         .sidebar { width: 300px; background: var(--sidebar-bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; }
         .main-content { flex: 1; padding: 40px; background: var(--bg-dark); overflow-y: auto; }
@@ -110,8 +110,11 @@
 
         /* Modals */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 100; justify-content: center; align-items: center; }
-        .modal-content { background: var(--card-bg); padding: 25px; border-radius: 6px; width: 400px; border: 1px solid var(--border); }
+        .modal-content { background: var(--card-bg); padding: 25px; border-radius: 6px; width: 400px; border: 1px solid var(--border); position: relative; }
         .modal input { width: 100%; padding: 8px 12px; margin: 10px 0; background: var(--bg-dark); border: 1px solid var(--border); color: var(--text-main); border-radius: 6px; }
+
+        .contact-link { display: flex; align-items: center; gap: 15px; color: var(--text-main); text-decoration: none; padding: 12px; background: var(--bg-dark); border: 1px solid var(--border); border-radius: 6px; margin-bottom: 10px; transition: 0.2s; }
+        .contact-link:hover { border-color: var(--accent); color: var(--accent); transform: translateX(5px); }
 
         .loader { border: 3px solid #f3f3f3; border-top: 3px solid var(--accent); border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; display: none; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -138,6 +141,8 @@
         <div class="nav-links">
             <div class="nav-item active" id="nav-home" onclick="switchView('home')">Dashboard</div>
             <div class="nav-item" id="nav-course" onclick="if(currentCourseIndex > -1) switchView('course')">Course</div>
+            <div class="nav-item" onclick="document.getElementById('about-modal').style.display='flex'">About Us</div>
+            <div class="nav-item" onclick="document.getElementById('contact-modal').style.display='flex'">Contact</div>
         </div>
         <div style="display: flex; gap: 15px; align-items: center;">
             <div style="color: var(--accent); font-weight: bold;">⏱️ <span id="session-timer">00:00</span></div>
@@ -251,6 +256,7 @@
             <button class="btn" style="width: 100%; margin-top: 10px;" onclick="document.getElementById('create-course-modal').style.display='none'">Cancel</button>
         </div>
     </div>
+
     <div class="modal" id="add-topic-modal">
         <div class="modal-content">
             <h2>Add Lecture</h2>
@@ -262,13 +268,59 @@
         </div>
     </div>
 
+    <!-- New Modals: About & Contact -->
+    <div class="modal" id="about-modal">
+        <div class="modal-content">
+            <h2 style="margin-bottom: 15px; color: var(--accent);">👨‍💻 About Us</h2>
+            <p style="color: var(--text-main); margin-bottom: 15px; font-size: 1.1rem;">
+                Hello! I am <strong>Shivam</strong>, a 2nd year CSE student. 🎓
+            </p>
+            <p style="color: var(--text-muted); line-height: 1.6;">
+                We created this webpage for students to help them stay consistent and focused. This portal allows you to organize your YouTube learning, track your daily progress, and maintain a study streak without distractions.
+            </p>
+            <button class="btn" style="width: 100%; margin-top: 20px;" onclick="document.getElementById('about-modal').style.display='none'">Close</button>
+        </div>
+    </div>
+
+    <div class="modal" id="contact-modal">
+        <div class="modal-content">
+            <h2 style="margin-bottom: 20px; color: var(--accent);">📞 Contact Us</h2>
+            
+            <a href="mailto:tszone@zohomail.in" class="contact-link">
+                <span style="font-size: 1.5rem;">📧</span>
+                <div>
+                    <div style="font-size: 0.8rem; color: var(--text-muted);">Email</div>
+                    <div style="font-weight: bold;">tszone@zohomail.in</div>
+                </div>
+            </a>
+
+            <a href="#" target="_blank" class="contact-link">
+                <span style="font-size: 1.5rem;">💼</span>
+                <div>
+                    <div style="font-size: 0.8rem; color: var(--text-muted);">LinkedIn</div>
+                    <div style="font-weight: bold;">Connect with Shivam</div>
+                </div>
+            </a>
+
+            <a href="#" target="_blank" class="contact-link">
+                <span style="font-size: 1.5rem;">📸</span>
+                <div>
+                    <div style="font-size: 0.8rem; color: var(--text-muted);">Instagram</div>
+                    <div style="font-weight: bold;">Follow for Updates</div>
+                </div>
+            </a>
+
+            <button class="btn" style="width: 100%; margin-top: 20px;" onclick="document.getElementById('contact-modal').style.display='none'">Close</button>
+        </div>
+    </div>
+
     <!-- FIREBASE & APP LOGIC -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
-        // --- FIREBASE CONFIG (Keep this same) ---
+        // --- FIREBASE CONFIG (Same as before) ---
         const firebaseConfig = {
             apiKey: "AIzaSyCf-BoHSE_-2YhF7DAbxYXT0cHOprE9rzk",
             authDomain: "mycourse-231f1.firebaseapp.com",
@@ -287,8 +339,8 @@
 
         // --- STATE ---
         let courses = [];
-        let studyData = {}; // { "YYYY-MM-DD": seconds }
-        let dailyGoals = []; // [ {text: "abc", done: false} ]
+        let studyData = {};
+        let dailyGoals = [];
         let currentCourseIndex = -1;
         let currentTopicIndex = -1;
         let sessionSeconds = 0;
@@ -360,52 +412,37 @@
                 studyData[today] = (studyData[today] || 0) + 10;
                 saveCloudData();
                 updateStats();
-                // Refresh heatmap only if needed (e.g. if color level changes), but 10s is freq.
-                // For performance, let's not re-render heatmap every 10s, maybe just update stats.
             }, 10000);
         }
 
-        // --- FEATURES: HEATMAP & GOALS ---
+        // --- FEATURES ---
         function renderHeatmap() {
             const grid = document.getElementById('heatmap-grid');
             grid.innerHTML = '';
-            
-            // Generate last 52 weeks
             const today = new Date();
-            // Start from 365 days ago
             const startDate = new Date();
             startDate.setDate(today.getDate() - 365);
-            
-            // Adjust to start on Sunday
             while(startDate.getDay() !== 0) { startDate.setDate(startDate.getDate() - 1); }
-
             let currentDate = new Date(startDate);
-            
             while (currentDate <= today) {
                 const col = document.createElement('div');
                 col.className = 'heatmap-col';
-                
                 for (let i = 0; i < 7; i++) {
                     const dateStr = currentDate.toISOString().split('T')[0];
-                    const seconds = studyData[dateStr] || 0;
-                    const mins = seconds / 60;
-                    
+                    const mins = (studyData[dateStr] || 0) / 60;
                     const cell = document.createElement('div');
                     cell.className = 'heatmap-cell';
                     cell.title = `${dateStr}: ${Math.round(mins)} mins`;
-                    
                     if (mins > 120) cell.classList.add('h-l4');
                     else if (mins > 60) cell.classList.add('h-l3');
                     else if (mins > 30) cell.classList.add('h-l2');
                     else if (mins > 0) cell.classList.add('h-l1');
                     else cell.classList.add('h-l0');
-
                     col.appendChild(cell);
                     currentDate.setDate(currentDate.getDate() + 1);
                 }
                 grid.appendChild(col);
             }
-            // Scroll to end
             grid.parentElement.scrollLeft = grid.parentElement.scrollWidth;
         }
 
@@ -438,16 +475,12 @@
             dailyGoals.forEach((g, i) => {
                 const li = document.createElement('li');
                 li.className = `goal-item ${g.done ? 'goal-done' : ''}`;
-                li.innerHTML = `
-                    <input type="checkbox" class="goal-checkbox" ${g.done ? 'checked' : ''} onchange="toggleGoal(${i})">
-                    <span class="goal-text">${g.text}</span>
-                    <span class="delete-goal" onclick="deleteGoal(${i})">×</span>
-                `;
+                li.innerHTML = `<input type="checkbox" class="goal-checkbox" ${g.done ? 'checked' : ''} onchange="toggleGoal(${i})"><span class="goal-text">${g.text}</span><span class="delete-goal" onclick="deleteGoal(${i})">×</span>`;
                 list.appendChild(li);
             });
         }
 
-        // --- EXISTING LOGIC (Stats, Timer, Courses) ---
+        // --- EXISTING LOGIC ---
         function updateTimer() {
             const m = Math.floor(sessionSeconds/60);
             const s = sessionSeconds%60;
@@ -464,7 +497,6 @@
         }
 
         window.openCreateModal = () => document.getElementById('create-course-modal').style.display='flex';
-        
         window.createNewCourse = () => {
             const name = document.getElementById('new-course-name').value;
             if(name) {
@@ -552,7 +584,7 @@
         }
         
         window.deleteTopic = () => {
-            if(confirm("Delete topic?") && currentTopicIndex > -1) {
+            if(confirm("Delete topic?")) {
                 courses[currentCourseIndex].topics.splice(currentTopicIndex, 1);
                 saveCloudData();
                 renderTopics();
