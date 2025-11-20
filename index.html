@@ -129,7 +129,7 @@
         .sidebar { width: 300px; background: var(--sidebar-bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; transition: 0.3s; }
         .main-content { flex: 1; padding: 40px; background: var(--bg-dark); overflow-y: auto; display: flex; flex-direction: column; transition: 0.3s; }
 
-        /* FIX: Topic list scrolling */
+        /* FIX: Topic list scrolling (आपके अनुरोध के अनुसार जोड़ा गया) */
         #topic-list { 
             padding: 10px;
             flex: 1; /* Takes up remaining vertical space in the flex column parent (.sidebar) */
@@ -261,7 +261,7 @@
                         <div id="progress-bar" style="width: 0%; background: var(--success); height: 100%; border-radius: 2px;"></div>
                     </div>
                 </div>
-                <!-- FIX APPLIED HERE: #topic-list handles scrolling -->
+                <!-- स्क्रॉलिंग के लिए टॉपिक लिस्ट कंटेनर -->
                 <div class="topic-list" id="topic-list"></div>
             </div>
             <div class="main-content">
