@@ -20,6 +20,21 @@
             --shadow: none;
         }
 
+        /* Make topic list scrollable when it grows */
+#topic-list {
+    padding: 10px;         /* keep existing padding */
+    overflow-y: auto;      /* enable vertical scrolling */
+    -webkit-overflow-scrolling: touch;
+    flex: 1 1 auto;        /* let it grow and shrink inside sidebar */
+    max-height: calc(100vh - 160px); /* limits height so footer/header stay visible */
+}
+
+/* optional: nicer thin scrollbar (won't break layout) */
+#topic-list::-webkit-scrollbar { width: 8px; }
+#topic-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 6px; }
+#topic-list::-webkit-scrollbar-track { background: transparent; }
+
+
         [data-theme="light"] {
             --bg-dark: #f3f4f6;
             --sidebar-bg: #ffffff;
