@@ -35,7 +35,7 @@
             --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; }
         
         body { 
             background-color: var(--bg-dark); 
@@ -45,14 +45,6 @@
             height: 100vh; 
             overflow: hidden;
             transition: background-color 0.3s ease, color 0.3s ease; 
-        }
-
-        /* Message Toast */
-        #message-toast {
-            position: fixed; top: 70px; right: 20px; z-index: 300;
-            padding: 12px 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            font-weight: 600; color: white; background: var(--accent);
-            display: none; opacity: 0; transition: opacity 0.3s ease;
         }
 
         /* Login Screen */
@@ -111,51 +103,96 @@
         .dashboard-row { display: flex; gap: 25px; flex-wrap: wrap; flex: 1; } 
         .dashboard-col { flex: 1; min-width: 300px; display: flex; flex-direction: column; gap: 25px; }
 
-        /* Stats & Heatmap (styles truncated for brevity) */
+        /* Stats & Heatmap */
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
         .stat-card { background: var(--card-bg); border: 1px solid var(--border); padding: 20px; border-radius: 6px; box-shadow: var(--shadow); }
         .stat-value { font-size: 2rem; font-weight: bold; color: var(--text-main); display: block; margin: 5px 0; }
         .stat-label { color: var(--text-muted); font-size: 0.85rem; }
 
-        /* Daily Goals (styles truncated for brevity) */
+        .heatmap-card { background: var(--card-bg); border: 1px solid var(--border); padding: 20px; border-radius: 6px; box-shadow: var(--shadow); }
+        .heatmap-container { display: flex; flex-wrap: wrap; gap: 20px; }
+        .heatmap-month { display: flex; flex-direction: column; gap: 5px; }
+        .heatmap-month-label { font-size: 0.8rem; color: var(--text-muted); font-weight: bold; }
+        .heatmap-month-grid { display: grid; grid-template-columns: repeat(7, 10px); gap: 3px; }
+        .heatmap-cell { width: 10px; height: 10px; border-radius: 2px; background: var(--bg-dark); border: 1px solid var(--border); }
+        .h-l0 { background: var(--bg-dark); }
+        .h-l1 { background: #0e4429; border-color: #0e4429; }
+        .h-l2 { background: #006d32; border-color: #006d32; }
+        .h-l3 { background: #26a641; border-color: #26a641; }
+        .h-l4 { background: #39d353; border-color: #39d353; }
+        [data-theme="light"] .h-l0 { background: #ebedf0; border-color: #e1e4e8; }
+        [data-theme="light"] .h-l1 { background: #9be9a8; border-color: #9be9a8; }
+        [data-theme="light"] .h-l2 { background: #40c463; border-color: #40c463; }
+        [data-theme="light"] .h-l3 { background: #30a14e; border-color: #30a14e; }
+        [data-theme="light"] .h-l4 { background: #216e39; border-color: #216e39; }
+
+        /* Daily Goals */
         .goals-card { background: var(--card-bg); border: 1px solid var(--border); padding: 20px; border-radius: 6px; flex: 1; box-shadow: var(--shadow); }
         .goal-input-group { display: flex; gap: 10px; margin-bottom: 15px; }
-        /* Courses (styles truncated for brevity) */
+        .goal-input-group input { flex: 1; padding: 10px 15px; background: var(--bg-dark); border: 1px solid var(--border); border-radius: 6px; color: var(--text-main); outline: none; font-size: 0.95rem; transition: 0.3s; }
+        .goal-input-group input:focus { border-color: var(--accent); }
+        .goal-list { list-style: none; max-height: 300px; overflow-y: auto; }
+        .goal-item { display: flex; align-items: center; gap: 10px; padding: 12px; border-bottom: 1px solid var(--border); }
+        .goal-item:hover { background: rgba(128,128,128,0.1); }
+        .goal-checkbox { width: 18px; height: 18px; accent-color: var(--success); cursor: pointer; }
+        .goal-text { flex: 1; }
+        .goal-done .goal-text { text-decoration: line-through; color: var(--text-muted); }
+        .delete-goal { color: var(--text-muted); cursor: pointer; font-size: 1.2rem; padding: 0 5px; }
+        .delete-goal:hover { color: var(--danger); }
+
+        /* Courses */
         .courses-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
         .course-card { background: var(--card-bg); border: 1px solid var(--border); padding: 20px; border-radius: 6px; cursor: pointer; transition: 0.3s; box-shadow: var(--shadow); }
+        .course-card:hover { border-color: var(--accent); transform: translateY(-3px); }
+        .add-new { border: 1px dashed var(--text-muted); display: flex; align-items: center; justify-content: center; flex-direction: column; background: transparent; box-shadow: none; }
 
         /* Sidebar & Player */
-        #course-view { display: none; width: 100%; height: 100%; display: flex; }
+        #course-view { display: none; width: 100%; height: 100%; }
         .sidebar { width: 300px; background: var(--sidebar-bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; transition: 0.3s; }
         .main-content { flex: 1; padding: 40px; background: var(--bg-dark); overflow-y: auto; display: flex; flex-direction: column; transition: 0.3s; }
-
-        /* FIX: Topic list scrolling (आपके अनुरोध के अनुसार जोड़ा गया) */
-        #topic-list { 
-            padding: 10px;
-            flex: 1; /* Takes up remaining vertical space in the flex column parent (.sidebar) */
-            overflow-y: auto; /* Enables vertical scrolling when content exceeds height */
-        }
         
         .topic-item { padding: 12px; margin-bottom: 5px; border-radius: 6px; cursor: pointer; display: flex; justify-content: space-between; font-size: 0.9rem; color: var(--text-muted); transition: 0.2s; border: 1px solid transparent; }
         .topic-item:hover { background: rgba(128,128,128,0.1); color: var(--text-main); }
         .topic-item.active { background: #1f6feb; color: white; }
         .topic-item.completed { background-color: var(--success) !important; color: white !important; font-weight: bold; border: 1px solid #2ea043; }
         [data-theme="light"] .topic-item.completed { color: white !important; }
+        .topic-item.completed { color: var(--pink-text) !important; }
 
-        /* Utilities (styles truncated for brevity) */
+        .cinema-container { width: 100%; max-width: 900px; aspect-ratio: 16/9; background: #000; border-radius: 6px; margin-bottom: 20px; border: 1px solid var(--border); }
+        iframe { width: 100%; height: 100%; border: none; }
+
+        /* Note Section */
+        .notes-section { width: 100%; max-width: 900px; margin-top: 30px; background: var(--card-bg); padding: 20px; border-radius: 10px; border: 1px solid var(--border); box-shadow: var(--shadow); }
+        .notes-area { width: 100%; height: 200px; background: var(--bg-dark); border: 1px solid var(--border); color: var(--text-main); padding: 15px; border-radius: 6px; resize: vertical; font-size: 0.95rem; line-height: 1.5; font-family: 'Courier New', Courier, monospace; transition: 0.3s; }
+        .notes-area:focus { border-color: var(--accent); outline: none; }
+
+        /* Utilities */
+        .btn { padding: 8px 16px; border-radius: 6px; border: 1px solid rgba(27,31,36,0.15); cursor: pointer; font-weight: 600; font-size: 14px; transition: 0.2s; }
+        .btn-primary { background: #238636; color: white; border: 1px solid rgba(27,31,36,0.15); }
+        .btn-primary:hover { background: #2ea043; transform: translateY(-1px); }
         .btn-complete-done { background-color: var(--success) !important; color: var(--pink-text) !important; border-color: #2ea043; font-weight: bold; }
         [data-theme="light"] .btn-complete-done { color: white !important; }
+
+        .btn-danger { background: transparent; color: var(--danger); border: 1px solid var(--border); }
+        .btn-danger:hover { color: white; background: var(--danger); border-color: var(--danger); }
+
+        /* Footer */
+        .app-footer { text-align: center; padding: 25px; margin-top: 40px; color: var(--text-muted); font-size: 0.85rem; border-top: 1px solid var(--border); background: var(--nav-bg); width: 100%; transition: 0.3s; }
 
         /* Modals */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 100; justify-content: center; align-items: center; }
         .modal-content { background: var(--card-bg); padding: 25px; border-radius: 6px; width: 400px; border: 1px solid var(--border); position: relative; box-shadow: var(--shadow); }
         .modal input { width: 100%; padding: 8px 12px; margin: 10px 0; background: var(--bg-dark); border: 1px solid var(--border); color: var(--text-main); border-radius: 6px; }
 
+        .contact-link { display: flex; align-items: center; gap: 15px; color: var(--text-main); text-decoration: none; padding: 12px; background: var(--bg-dark); border: 1px solid var(--border); border-radius: 6px; margin-bottom: 10px; transition: 0.2s; }
+        .contact-link:hover { border-color: var(--accent); color: var(--accent); transform: translateX(5px); }
+
+        .loader { border: 3px solid #f3f3f3; border-top: 3px solid var(--accent); border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; display: none; margin: 10px auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
     </style>
 </head>
 <body>
-    <!-- Global Message Toast (Replacement for alert) -->
-    <div id="message-toast" role="alert"></div>
 
     <!-- Login Screen -->
     <div id="login-screen">
@@ -189,8 +226,8 @@
             <!-- Divider -->
             <div style="margin: 20px 0; color: var(--text-muted); font-size: 0.8rem;">OR</div>
 
-            <!-- Google Login (Note: Google sign-in won't work in this environment unless fully configured externally) -->
-            <button class="google-btn" onclick="showMessage('Google sign-in is not supported in this environment.')">
+            <!-- Google Login -->
+            <button class="google-btn" onclick="handleGoogleLogin()">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" width="20" alt="G">
                 Continue with Google
             </button>
@@ -218,7 +255,7 @@
 
     <!-- Main App -->
     <div class="app-container" id="main-app">
-        <!-- Dashboard View -->
+        <!-- ... (Dashboard content same as before, shortened for brevity) ... -->
         <div id="home-view">
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <h1 id="welcome-msg" style="font-size: 1.5rem;">Welcome!</h1>
@@ -261,8 +298,7 @@
                         <div id="progress-bar" style="width: 0%; background: var(--success); height: 100%; border-radius: 2px;"></div>
                     </div>
                 </div>
-                <!-- स्क्रॉलिंग के लिए टॉपिक लिस्ट कंटेनर -->
-                <div class="topic-list" id="topic-list"></div>
+                <div class="topic-list" id="topic-list" style="padding: 10px;"></div>
             </div>
             <div class="main-content">
                 <div style="flex: 1;">
@@ -273,7 +309,7 @@
                     <div class="cinema-container"><iframe id="video-player" src="" allowfullscreen></iframe></div>
                     <div style="display: flex; gap: 10px; align-items: center;">
                         <button id="mark-btn" class="btn btn-primary" style="flex:1; padding: 12px;" onclick="markComplete()">✅ Mark as Completed</button>
-                        <button class="btn btn-danger" onclick="showDeleteTopicConfirm()" style="padding: 12px;">🗑️</button>
+                        <button class="btn btn-danger" onclick="deleteTopic()" style="padding: 12px;">🗑️</button>
                     </div>
                     <div style="margin-top: 10px; display: flex; justify-content: space-between;">
                         <h2 id="video-title" style="color: var(--text-main);">Select Topic</h2>
@@ -285,7 +321,7 @@
                         <textarea id="topic-notes" class="notes-area" placeholder="Write your key points here..."></textarea>
                         <button class="btn btn-primary" style="margin-top: 10px;" onclick="saveCurrentNote()">Save Note</button>
                     </div>
-                    <button class="btn btn-danger" style="margin-top: 40px;" onclick="showDeleteCourseConfirm()">Delete Entire Course</button>
+                    <button class="btn btn-danger" style="margin-top: 40px;" onclick="deleteCourse()">Delete Entire Course</button>
                 </div>
                 <div class="app-footer">&copy; 2025 Copyright by <strong>Shivam Kumar (TIT(Excellence))</strong></div>
             </div>
@@ -305,26 +341,14 @@
         <div class="modal-content">
             <h2>Add Lecture</h2>
             <input type="text" id="inp-title" placeholder="Title">
-            <input type="text" id="inp-link" placeholder="YouTube Link (Full URL or Video ID)">
+            <input type="text" id="inp-link" placeholder="YouTube Link">
             <input type="text" id="inp-desc" placeholder="Description">
             <button class="btn btn-primary" style="width: 100%;" onclick="addTopic()">Add</button>
             <button class="btn" style="width: 100%; margin-top: 10px;" onclick="document.getElementById('add-topic-modal').style.display='none'">Cancel</button>
         </div>
     </div>
     
-    <!-- Generic Confirmation Modal (Replaces confirm()) -->
-    <div class="modal" id="generic-confirm-modal">
-        <div class="modal-content">
-            <h2 id="confirm-title" style="color: var(--danger);">Confirm Action</h2>
-            <p id="confirm-message" style="margin: 15px 0; color: var(--text-main);"></p>
-            <div style="display: flex; justify-content: space-between; gap: 10px;">
-                <button class="btn btn-danger" style="flex: 1;" onclick="resolveConfirm(false)">Cancel</button>
-                <button class="btn btn-primary" style="flex: 1; background: var(--danger);" onclick="resolveConfirm(true)">Delete</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- About Modal -->
+    <!-- Updated About Modal -->
     <div class="modal" id="about-modal">
         <div class="modal-content" style="width: 500px;">
             <h2 style="margin-bottom: 20px; color: var(--accent); border-bottom: 1px solid var(--border); padding-bottom: 10px;">👨‍💻 About Us</h2>
@@ -359,107 +383,40 @@
 
     <!-- FIREBASE & APP LOGIC -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
         import { 
             getAuth, 
-            signInAnonymously,
-            signInWithCustomToken,
-            onAuthStateChanged,
-            GoogleAuthProvider,
-            signInWithPopup,
+            signInWithPopup, 
+            GoogleAuthProvider, 
             createUserWithEmailAndPassword, 
             signInWithEmailAndPassword, 
             updateProfile, 
-            signOut
-        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { 
-            getFirestore, 
-            doc, 
-            getDoc, 
-            setDoc,
-            setLogLevel 
-        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+            signOut, 
+            onAuthStateChanged 
+        } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
-        // --- GLOBAL VARIABLES (Provided by Canvas Environment) ---
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
-        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+        // --- FIREBASE CONFIG ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyCf-BoHSE_-2YhF7DAbxYXT0cHOprE9rzk",
+            authDomain: "mycourse-231f1.firebaseapp.com",
+            projectId: "mycourse-231f1",
+            storageBucket: "mycourse-231f1.firebasestorage.app",
+            messagingSenderId: "519848272346",
+            appId: "1:519848272346:android:b495935905823e921920e3" 
+        };
 
-        let app, auth, db, user, userId;
-        setLogLevel('Debug'); // Enable Firestore logging
+        let app, auth, db, user;
+        try {
+            app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            db = getFirestore(app);
+        } catch (e) { console.error("Firebase Init Error", e); }
 
-        // --- FIREBASE INIT ---
-        if (firebaseConfig) {
-            try {
-                app = initializeApp(firebaseConfig);
-                auth = getAuth(app);
-                db = getFirestore(app);
-                
-                // IMPORTANT: Authenticate the user with the provided token or anonymously
-                async function authenticateUser() {
-                    try {
-                        if (initialAuthToken) {
-                            await signInWithCustomToken(auth, initialAuthToken);
-                        } else {
-                            await signInAnonymously(auth);
-                        }
-                    } catch (e) {
-                        console.error("Authentication failed:", e);
-                        showAuthError("Authentication Failed. Please try again.");
-                    }
-                }
-                authenticateUser();
-
-            } catch (e) { 
-                console.error("Firebase Init Error", e); 
-            }
-        } else {
-            console.error("Firebase config not available. App will not save data.");
-            // Fallback for UI visibility even without full persistence
-            document.getElementById('login-screen').style.display = 'none';
-            document.getElementById('main-nav').style.display = 'flex';
-            document.getElementById('main-app').style.display = 'flex';
-        }
-
-        // --- STATE & DATA PATHS ---
+        // --- STATE ---
         let courses = [], studyData = {}, dailyGoals = [];
         let currentCourseIndex = -1, currentTopicIndex = -1, sessionSeconds = 0, isSaving = false;
 
-        function getUserDataDocRef(uid) {
-             // Secure private data path for user data
-            const userCollection = `/artifacts/${appId}/users/${uid}/data`;
-            return doc(db, userCollection, 'study_data');
-        }
-
-        // --- UI UTILITIES (Replacement for alert/confirm) ---
-        let confirmResolver;
-        window.showMessage = (msg, duration = 3000) => {
-            const toast = document.getElementById('message-toast');
-            toast.innerText = msg;
-            toast.style.display = 'block';
-            setTimeout(() => toast.style.opacity = 1, 10);
-            setTimeout(() => {
-                toast.style.opacity = 0;
-                setTimeout(() => toast.style.display = 'none', 300);
-            }, duration);
-        }
-
-        window.showConfirm = (title, message) => {
-            return new Promise(resolve => {
-                confirmResolver = resolve;
-                document.getElementById('confirm-title').innerText = title;
-                document.getElementById('confirm-message').innerText = message;
-                document.getElementById('generic-confirm-modal').style.display = 'flex';
-            });
-        }
-        window.resolveConfirm = (result) => {
-            document.getElementById('generic-confirm-modal').style.display = 'none';
-            if (confirmResolver) {
-                confirmResolver(result);
-                confirmResolver = null;
-            }
-        }
-        
         // --- AUTH UI TOGGLE ---
         window.toggleAuthMode = (mode) => {
             const loginForm = document.getElementById('login-form');
@@ -489,7 +446,7 @@
         window.handleEmailLogin = () => {
             const email = document.getElementById('login-email').value;
             const pass = document.getElementById('login-pass').value;
-            if(!email || !pass) return showMessage("Please enter both email and password.");
+            if(!email || !pass) return alert("Please enter all fields");
 
             document.getElementById('auth-loader').style.display = 'block';
             signInWithEmailAndPassword(auth, email, pass)
@@ -504,12 +461,12 @@
             const email = document.getElementById('signup-email').value;
             const pass = document.getElementById('signup-pass').value;
 
-            if(!name || !email || !pass) return showMessage("Please enter all fields.");
+            if(!name || !email || !pass) return alert("Please enter all fields");
 
             document.getElementById('auth-loader').style.display = 'block';
             createUserWithEmailAndPassword(auth, email, pass)
                 .then((result) => {
-                    // Update Display Name
+                    // Update Display Name & Force UI Update
                     updateProfile(result.user, { displayName: name })
                         .then(() => {
                             document.getElementById('welcome-msg').innerText = `Welcome back, ${name}! 👋`;
@@ -520,14 +477,17 @@
                 });
         }
 
-        // 3. Google Login - Placeholder since it requires external setup not viable here
+        // 3. Google Login
         window.handleGoogleLogin = () => {
-             showMessage("Google Sign-In is not supported in this embedded environment. Please use Email/Password.");
+            document.getElementById('auth-loader').style.display = 'block';
+            signInWithPopup(auth, new GoogleAuthProvider()).catch(e => {
+                showAuthError(e.message);
+            });
         }
 
         function showAuthError(msg) {
             const el = document.getElementById('login-error');
-            el.innerText = msg.replace("Firebase: Error (auth/", "").replace(").", "");
+            el.innerText = msg.replace("Firebase: ", "");
             el.style.display = 'block';
             document.getElementById('auth-loader').style.display = 'none';
         }
@@ -538,7 +498,6 @@
             document.getElementById('auth-loader').style.display = 'none';
             if (u) {
                 user = u;
-                userId = u.uid;
                 document.getElementById('login-screen').style.display = 'none';
                 document.getElementById('main-nav').style.display = 'flex';
                 document.getElementById('main-app').style.display = 'flex';
@@ -554,62 +513,34 @@
                 await loadCloudData();
                 initApp();
             } else {
-                // Only show login screen if Firebase is configured
-                if (firebaseConfig) {
-                    document.getElementById('login-screen').style.display = 'flex';
-                }
+                document.getElementById('login-screen').style.display = 'flex';
             }
         });
 
-        // --- CLOUD & APP LOGIC ---
+        // --- CLOUD & APP LOGIC (Same as before) ---
         async function loadCloudData() {
-            if (!userId) return;
             try {
-                const docRef = getUserDataDocRef(userId);
-                const snap = await getDoc(docRef);
+                const snap = await getDoc(doc(db, "users", user.uid));
                 if (snap.exists()) {
                     const data = snap.data();
-                    courses = data.courses || []; 
-                    studyData = data.studyData || {}; 
-                    dailyGoals = data.dailyGoals || [];
+                    courses = data.courses || []; studyData = data.studyData || {}; dailyGoals = data.dailyGoals || [];
                 } else {
-                    // Initialize and save defaults if document doesn't exist
                     courses = []; studyData = {}; dailyGoals = []; saveCloudData();
                 }
-            } catch (e) { 
-                console.error("Load error", e); 
-                showMessage("Could not load data. Check console for details.", 5000);
-            }
+            } catch (e) { console.error("Load error", e); }
         }
 
         async function saveCloudData() {
-            if (!userId || isSaving) return;
+            if (!user || isSaving) return;
             isSaving = true;
-            try { 
-                const docRef = getUserDataDocRef(userId);
-                await setDoc(docRef, { courses, studyData, dailyGoals }, { merge: true }); 
-            } catch(e) {
-                console.error("Save error:", e);
-                showMessage("Data failed to save.", 3000);
-            }
+            try { await setDoc(doc(db, "users", user.uid), { courses, studyData, dailyGoals }, { merge: true }); } catch(e) {}
             isSaving = false;
         }
 
         function initApp() {
             renderCourses(); renderHeatmap(); renderGoals(); updateStats();
-            // Start the timer and study time tracker
-            if (!window.sessionTimerInterval) {
-                 window.sessionTimerInterval = setInterval(() => { sessionSeconds++; updateTimer(); }, 1000);
-            }
-            if (!window.studyTrackerInterval) {
-                // Tracks study minutes (10 seconds interval = 10 study seconds)
-                window.studyTrackerInterval = setInterval(() => { 
-                    const today = new Date().toISOString().split('T')[0]; 
-                    studyData[today] = (studyData[today] || 0) + 10; 
-                    saveCloudData(); 
-                    updateStats(); 
-                }, 10000);
-            }
+            setInterval(() => { sessionSeconds++; updateTimer(); }, 1000);
+            setInterval(() => { const today = new Date().toISOString().split('T')[0]; studyData[today] = (studyData[today] || 0) + 10; saveCloudData(); updateStats(); }, 10000);
         }
 
         // --- THEME ---
@@ -625,68 +556,39 @@
         document.documentElement.setAttribute('data-theme', savedTheme);
         document.addEventListener('DOMContentLoaded', () => document.getElementById('theme-icon').innerText = savedTheme === 'light' ? '☀️' : '🌙');
 
-        // --- COURSE LOGIC ---
+        // --- LOGIC FUNCTIONS (Copied for completeness) ---
         window.openCreateModal = () => document.getElementById('create-course-modal').style.display='flex';
         window.createNewCourse = () => {
-            const name = document.getElementById('new-course-name').value.trim();
-            if(name) { 
-                courses.push({ name, topics: [] }); 
-                saveCloudData(); 
-                renderCourses(); 
-                document.getElementById('create-course-modal').style.display='none'; 
-                document.getElementById('new-course-name').value = '';
-                showMessage(`Course '${name}' created!`);
-            } else {
-                showMessage("Please enter a course name.");
-            }
+            const name = document.getElementById('new-course-name').value;
+            if(name) { courses.push({ name, topics: [] }); saveCloudData(); renderCourses(); document.getElementById('create-course-modal').style.display='none'; }
         }
         function renderCourses() {
             const grid = document.getElementById('courses-grid');
             const addBtn = grid.querySelector('.add-new');
             grid.querySelectorAll('.course-card:not(.add-new)').forEach(e => e.remove());
             courses.forEach((c, idx) => {
-                const totalTopics = c.topics.length;
-                const completedTopics = c.topics.filter(t => t.completed).length;
-                const progress = totalTopics > 0 ? (completedTopics / totalTopics) * 100 : 0;
-                
                 const div = document.createElement('div');
                 div.className = 'course-card';
-                div.innerHTML = `
-                    <h3 style="margin-bottom: 5px;">${c.name}</h3>
-                    <p style="color:var(--text-muted); font-size:0.9rem;">${totalTopics} Topics | ${completedTopics} Done</p>
-                    <div style="margin-top: 10px; background: var(--border); height: 4px; border-radius: 2px;">
-                        <div style="width: ${progress}%; background: ${progress === 100 ? 'var(--success)' : 'var(--accent)'}; height: 100%; border-radius: 2px;"></div>
-                    </div>
-                `;
+                div.innerHTML = `<h3>${c.name}</h3><p style="color:var(--text-muted); font-size:0.9rem;">${c.topics.length} Topics</p>`;
                 div.onclick = () => loadCourse(idx);
                 grid.insertBefore(div, addBtn);
             });
         }
         window.loadCourse = (idx) => {
             currentCourseIndex = idx;
-            currentTopicIndex = -1; // Reset topic index when switching courses
             const c = courses[idx];
             document.getElementById('course-title-display').innerText = c.name;
-            
-            // Activate the Course nav link
-            document.getElementById('nav-course').style.display = 'flex'; // Ensure link is visible
-            document.getElementById('nav-course').classList.add('active'); 
-
             switchView('course');
             renderTopics();
-            if(c.topics.length > 0) {
-                loadTopic(0);
-            } else {
+            if(c.topics.length > 0) loadTopic(0);
+            else {
                 document.getElementById('video-player').src = '';
-                document.getElementById('video-title').innerText = "Course created. Add your first topic!";
-                document.getElementById('video-desc').innerText = "Use the '+ Add Topic' button above to get started.";
+                document.getElementById('video-title').innerText = "No Topic";
                 document.getElementById('mark-btn').style.display = 'none';
                 document.getElementById('topic-notes').value = "";
-                document.getElementById('completion-date').style.display = 'none';
             }
         }
         function renderTopics() {
-            if (currentCourseIndex < 0) return;
             const list = document.getElementById('topic-list');
             list.innerHTML = '';
             const t = courses[currentCourseIndex].topics;
@@ -704,26 +606,14 @@
         window.loadTopic = (i) => {
             currentTopicIndex = i;
             const t = courses[currentCourseIndex].topics[i];
-            
-            // Parse notes safely, handling old structure if necessary
-            let noteContent = t.notes || "";
-            try {
-                // If notes were saved as a string (the new way)
-                noteContent = t.notes || "";
-            } catch(e) {
-                console.warn("Could not parse notes, using raw data.");
-                noteContent = t.notes || "";
-            }
-
             document.getElementById('video-player').src = t.url;
             document.getElementById('video-title').innerText = t.title;
             document.getElementById('video-desc').innerText = t.desc;
-            document.getElementById('topic-notes').value = noteContent;
+            document.getElementById('topic-notes').value = t.notes || "";
             document.getElementById('save-status').innerText = "";
             const btn = document.getElementById('mark-btn');
             const dateEl = document.getElementById('completion-date');
             btn.style.display = 'block';
-            
             if (t.completed) {
                 btn.innerHTML = "🎉 Completed";
                 btn.classList.remove('btn-primary');
@@ -742,36 +632,20 @@
             renderTopics();
         }
         window.addTopic = () => {
-            const title = document.getElementById('inp-title').value.trim();
-            const link = document.getElementById('inp-link').value.trim();
-            const desc = document.getElementById('inp-desc').value.trim();
-            
-            if (!title || !link) return showMessage("Title and Link are required.");
-
-            // Regex to extract YouTube ID from various formats
-            const match = link.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/|shorts\/)([^"&?\/ ]{11})/i);
-            
-            if(match && match[1].length === 11) {
-                const videoId = match[1];
+            const title = document.getElementById('inp-title').value;
+            const link = document.getElementById('inp-link').value;
+            const desc = document.getElementById('inp-desc').value;
+            const match = link.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=|shorts\/)([^#&?]*).*/);
+            if(match && match[2].length===11) {
                 courses[currentCourseIndex].topics.push({
-                    title, 
-                    desc, 
-                    completed: false, 
-                    completedOn: null, 
-                    notes: "",
-                    url: `https://www.youtube.com/embed/${videoId}?modestbranding=1&rel=0&loop=1&playlist=${videoId}`
+                    title, desc, completed: false, completedOn: null, notes: "",
+                    url: `https://www.youtube.com/embed/${match[2]}?modestbranding=1&rel=0&loop=1&playlist=${match[2]}`
                 });
                 saveCloudData();
                 renderTopics();
                 document.getElementById('add-topic-modal').style.display='none';
-                document.getElementById('inp-title').value = '';
-                document.getElementById('inp-link').value = '';
-                document.getElementById('inp-desc').value = '';
-                if(courses[currentCourseIndex].topics.length === 1) loadTopic(0);
-                showMessage(`Topic '${title}' added.`);
-            } else { 
-                showMessage("Invalid YouTube Link. Please use a valid video URL.", 4000); 
-            }
+                if(courses[currentCourseIndex].topics.length===1) loadTopic(0);
+            } else { alert("Invalid Link"); }
         }
         window.markComplete = () => {
             if(currentTopicIndex > -1) {
@@ -780,55 +654,24 @@
                 topic.completedOn = topic.completed ? new Date().toISOString() : null;
                 saveCloudData();
                 loadTopic(currentTopicIndex);
-                showMessage(topic.completed ? `Topic marked completed! Great job!` : `Topic marked incomplete.`);
             }
         }
-
-        window.showDeleteTopicConfirm = async () => {
-            if(currentTopicIndex < 0) return showMessage("Please select a topic first.");
-            const topicName = courses[currentCourseIndex].topics[currentTopicIndex].title;
-            const confirmed = await showConfirm(`Delete Topic: ${topicName}`, `Are you sure you want to permanently delete this lecture? This cannot be undone.`);
-            if (confirmed) {
-                deleteTopic();
+        window.deleteTopic = () => {
+            if(confirm("Delete topic?")) {
+                courses[currentCourseIndex].topics.splice(currentTopicIndex, 1);
+                saveCloudData();
+                renderTopics();
+                if(courses[currentCourseIndex].topics.length > 0) loadTopic(0);
             }
         }
-        function deleteTopic() {
-            courses[currentCourseIndex].topics.splice(currentTopicIndex, 1);
-            saveCloudData();
-            renderTopics();
-            currentTopicIndex = -1; // Reset topic selection
-            
-            if(courses[currentCourseIndex].topics.length > 0) {
-                loadTopic(0);
-            } else {
-                 // Clear player when no topics remain
-                document.getElementById('video-player').src = '';
-                document.getElementById('video-title').innerText = "No Topic. Add one!";
-                document.getElementById('video-desc').innerText = "...";
-                document.getElementById('mark-btn').style.display = 'none';
-                document.getElementById('topic-notes').value = "";
-                document.getElementById('completion-date').style.display = 'none';
-            }
-            showMessage("Topic deleted successfully.");
+        window.deleteCourse = () => {
+             if(confirm("Delete Course?")) {
+                 courses.splice(currentCourseIndex, 1);
+                 saveCloudData();
+                 switchView('home');
+                 renderCourses();
+             }
         }
-
-        window.showDeleteCourseConfirm = async () => {
-            if(currentCourseIndex < 0) return showMessage("Please select a course first.");
-            const courseName = courses[currentCourseIndex].name;
-            const confirmed = await showConfirm(`Delete Course: ${courseName}`, `Are you sure you want to permanently delete the entire course? This cannot be undone.`);
-            if (confirmed) {
-                deleteCourse();
-            }
-        }
-        function deleteCourse() {
-            courses.splice(currentCourseIndex, 1);
-            saveCloudData();
-            currentCourseIndex = -1; // Reset course selection
-            switchView('home');
-            renderCourses();
-            showMessage("Course deleted successfully.");
-        }
-        
         window.saveCurrentNote = () => {
             if(currentTopicIndex > -1 && currentCourseIndex > -1) {
                 const noteContent = document.getElementById('topic-notes').value;
@@ -839,8 +682,6 @@
                 setTimeout(() => status.innerText = "", 2000);
             }
         }
-        
-        // --- GOAL LOGIC ---
         window.addGoal = () => {
             const input = document.getElementById('new-goal-input');
             const txt = input.value.trim();
@@ -858,12 +699,10 @@
                 list.appendChild(li);
             });
         }
-        
-        // --- STATS LOGIC ---
         function updateTimer() {
             const m = Math.floor(sessionSeconds/60);
             const s = sessionSeconds%60;
-            document.getElementById('session-timer').innerText = `${m<10?'0'+m:m}:${s<10?'0'+s:s}`;
+            document.getElementById('session-timer').innerText = `${m}:${s<10?'0'+s:s}`;
         }
         function updateStats() {
             const today = new Date().toISOString().split('T')[0];
@@ -872,77 +711,38 @@
             Object.values(studyData).forEach(v => total += v);
             document.getElementById('stat-today').innerText = (tSec/60).toFixed(0) + 'm';
             document.getElementById('stat-total').innerText = (total/3600).toFixed(1) + 'h';
-            renderHeatmap(); // Update heatmap whenever stats change
         }
         function renderHeatmap() {
             const container = document.getElementById('heatmap-grid');
             container.innerHTML = '';
             const today = new Date();
-            const year = today.getFullYear();
-            
-            // Generate 365 days of cells (or fewer if the year hasn't passed)
-            const daysInYear = (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0 ? 366 : 365;
-            const startDate = new Date(year, 0, 1);
-            let dayIndex = 0;
-            let currentMonth = -1;
-            
-            const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-            
-            const monthLabels = document.createElement('div');
-            monthLabels.style.display = 'flex';
-            monthLabels.style.flexWrap = 'nowrap';
-            monthLabels.style.gap = '3px';
-            monthLabels.style.alignItems = 'flex-start';
-            monthLabels.style.width = '100%';
-
-            // Create a pseudo-calendar structure for 365 days
-            const dayGrid = document.createElement('div');
-            dayGrid.style.display = 'grid';
-            // 7 days per week, and approximately 52 weeks in a year (52 * 7 = 364)
-            dayGrid.style.gridTemplateColumns = 'repeat(53, 10px)'; 
-            dayGrid.style.gridTemplateRows = 'repeat(7, 10px)'; 
-            dayGrid.style.gap = '3px';
-            
-            for (let d = new Date(startDate); d <= today; d.setDate(d.getDate() + 1)) {
-                const dateStr = d.toISOString().split('T')[0];
-                const dayOfWeek = d.getDay(); // 0 (Sun) to 6 (Sat)
-                
-                // Add month label at start of month
-                if (d.getMonth() !== currentMonth) {
-                    currentMonth = d.getMonth();
-                    const label = document.createElement('div');
-                    label.className = 'heatmap-month-label';
-                    label.innerText = monthNames[currentMonth];
-                    label.style.gridColumnStart = Math.floor(dayIndex / 7) + 1;
-                    label.style.gridRowStart = 1;
-                    monthLabels.appendChild(label);
+            for (let i = 11; i >= 0; i--) {
+                const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
+                const monthName = d.toLocaleString('default', { month: 'short' });
+                const year = d.getFullYear();
+                const daysInMonth = new Date(year, d.getMonth() + 1, 0).getDate();
+                const monthDiv = document.createElement('div');
+                monthDiv.className = 'heatmap-month';
+                const label = document.createElement('div');
+                label.className = 'heatmap-month-label';
+                label.innerText = `${monthName}`;
+                monthDiv.appendChild(label);
+                const grid = document.createElement('div');
+                grid.className = 'heatmap-month-grid';
+                for(let day = 1; day <= daysInMonth; day++) {
+                    const dateStr = `${year}-${String(d.getMonth()+1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                    const seconds = studyData[dateStr] || 0;
+                    const mins = seconds / 60;
+                    const cell = document.createElement('div');
+                    cell.className = 'heatmap-cell';
+                    cell.title = `${dateStr}: ${Math.round(mins)} mins`;
+                    if (mins > 120) cell.classList.add('h-l4'); else if (mins > 60) cell.classList.add('h-l3'); else if (mins > 30) cell.classList.add('h-l2'); else if (mins > 0) cell.classList.add('h-l1'); else cell.classList.add('h-l0');
+                    grid.appendChild(cell);
                 }
-
-                const seconds = studyData[dateStr] || 0;
-                const mins = seconds / 60;
-                let level = 'h-l0';
-                if (mins > 120) level = 'h-l4'; 
-                else if (mins > 60) level = 'h-l3'; 
-                else if (mins > 30) level = 'h-l2'; 
-                else if (mins > 0) level = 'h-l1';
-                
-                const cell = document.createElement('div');
-                cell.className = `heatmap-cell ${level}`;
-                cell.title = `${dateStr}: ${Math.round(mins)} mins`;
-                
-                // Position cell in the grid
-                cell.style.gridRow = dayOfWeek === 0 ? 7 : dayOfWeek; // Monday to Saturday = 1 to 6, Sunday = 7
-                cell.style.gridColumn = Math.floor(dayIndex / 7) + 1;
-                
-                dayGrid.appendChild(cell);
-                dayIndex++;
+                monthDiv.appendChild(grid);
+                container.appendChild(monthDiv);
             }
-
-            container.style.display = 'block';
-            container.appendChild(monthLabels);
-            container.appendChild(dayGrid);
         }
-
         window.switchView = (v) => {
             document.getElementById('home-view').style.display = v==='home'?'flex':'none';
             document.getElementById('course-view').style.display = v==='course'?'flex':'none';
