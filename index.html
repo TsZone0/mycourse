@@ -1,662 +1,820 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pro Study Portal - Master Your Learning</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <title>Pro Study Portal - Smart Learning Platform for Students</title>
+    <meta name="description" content="Pro Study Portal is a distraction-free learning platform for students to organize YouTube lectures, track progress with heatmaps, take notes, and build study streaks.">
+    <meta name="keywords" content="study portal, online learning, YouTube education, student productivity, study tracker, course organizer">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-dark: #0d1117;
-            --sidebar-bg: #161b22;
-            --nav-bg: #161b22;
-            --card-bg: #161b22;
-            --text-main: #c9d1d9;
-            --text-muted: #8b949e;
-            --accent: #58a6ff;
-            --success: #238636;
-            --danger: #da3633;
-            --pink-text: #ff79c6;
-            --border: #30363d;
+            --bg: #0a0c10;
+            --surface: #111418;
+            --surface2: #1a1f27;
+            --accent: #4ade80;
+            --accent2: #60a5fa;
+            --gold: #fbbf24;
+            --text: #e8eaed;
+            --muted: #6b7280;
+            --border: #1f2937;
         }
 
-        [data-theme="light"] {
-            --bg-dark: #f3f4f6;
-            --sidebar-bg: #ffffff;
-            --nav-bg: #ffffff;
-            --card-bg: #ffffff;
-            --text-main: #1f2937;
-            --text-muted: #6b7280;
-            --accent: #2563eb;
-            --success: #16a34a;
-            --danger: #dc2626;
-            --pink-text: #db2777;
-            --border: #e5e7eb;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
 
         body {
-            background-color: var(--bg-dark);
-            color: var(--text-main);
-            transition: all 0.3s ease;
-            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            line-height: 1.7;
+            overflow-x: hidden;
         }
 
-        .custom-card {
-            background: var(--card-bg);
+        /* NAV */
+        nav {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+            padding: 18px 60px;
+            display: flex; align-items: center; justify-content: space-between;
+            background: rgba(10,12,16,0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+        }
+        .nav-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem; font-weight: 900;
+            color: var(--accent);
+            text-decoration: none;
+        }
+        .nav-links { display: flex; gap: 30px; }
+        .nav-links a {
+            color: var(--muted); text-decoration: none;
+            font-size: 0.9rem; font-weight: 500;
+            transition: color 0.2s;
+        }
+        .nav-links a:hover { color: var(--text); }
+        .nav-cta {
+            background: var(--accent); color: #000;
+            padding: 10px 24px; border-radius: 6px;
+            font-weight: 700; font-size: 0.9rem;
+            text-decoration: none; transition: opacity 0.2s;
+        }
+        .nav-cta:hover { opacity: 0.85; }
+
+        /* HERO */
+        .hero {
+            min-height: 100vh;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            text-align: center; padding: 120px 20px 80px;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute; inset: 0;
+            background: radial-gradient(ellipse 80% 60% at 50% 30%, rgba(74,222,128,0.08) 0%, transparent 70%),
+                        radial-gradient(ellipse 50% 40% at 80% 80%, rgba(96,165,250,0.06) 0%, transparent 60%);
+            pointer-events: none;
+        }
+        .hero-badge {
+            display: inline-block;
+            background: rgba(74,222,128,0.1);
+            border: 1px solid rgba(74,222,128,0.3);
+            color: var(--accent);
+            padding: 6px 18px; border-radius: 100px;
+            font-size: 0.8rem; font-weight: 600;
+            margin-bottom: 30px; letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.8rem, 7vw, 6rem);
+            font-weight: 900; line-height: 1.05;
+            max-width: 900px;
+            background: linear-gradient(135deg, #fff 30%, #4ade80 70%, #60a5fa 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+        }
+        .hero p {
+            font-size: 1.15rem; color: var(--muted);
+            max-width: 580px; margin-bottom: 40px;
+        }
+        .hero-btns { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
+        .btn-primary {
+            background: var(--accent); color: #000;
+            padding: 15px 36px; border-radius: 8px;
+            font-weight: 700; font-size: 1rem;
+            text-decoration: none; transition: all 0.2s;
+            display: inline-block;
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(74,222,128,0.25); }
+        .btn-secondary {
+            background: transparent; color: var(--text);
             border: 1px solid var(--border);
-            border-radius: 12px;
-            transition: transform 0.2s, border-color 0.2s;
+            padding: 15px 36px; border-radius: 8px;
+            font-weight: 600; font-size: 1rem;
+            text-decoration: none; transition: all 0.2s;
+            display: inline-block;
         }
+        .btn-secondary:hover { border-color: var(--muted); }
 
-        .custom-card:hover {
-            border-color: var(--accent);
+        .hero-stats {
+            margin-top: 70px; display: flex; gap: 50px; justify-content: center; flex-wrap: wrap;
         }
-
-        .nav-link {
-            cursor: pointer;
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            transition: 0.2s;
-            color: var(--text-muted);
+        .hero-stat { text-align: center; }
+        .hero-stat .num {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem; font-weight: 900; color: var(--accent);
         }
+        .hero-stat .label { font-size: 0.85rem; color: var(--muted); }
 
-        .nav-link:hover { color: var(--text-main); background: rgba(128,128,128,0.1); }
-        .nav-link.active { color: var(--accent); font-weight: 600; }
-
-        .heatmap-cell { width: 12px; height: 12px; border-radius: 2px; background: var(--border); }
-        .h-l1 { background: #0e4429; } .h-l2 { background: #006d32; }
-        .h-l3 { background: #26a641; } .h-l4 { background: #39d353; }
-
-        .hero-gradient {
-            background: radial-gradient(circle at top right, rgba(88, 166, 255, 0.15), transparent);
+        /* FEATURES */
+        .section { padding: 100px 60px; max-width: 1200px; margin: 0 auto; }
+        .section-label {
+            font-size: 0.78rem; font-weight: 700; letter-spacing: 2px;
+            text-transform: uppercase; color: var(--accent);
+            margin-bottom: 12px;
         }
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 700; line-height: 1.15;
+            margin-bottom: 15px;
+        }
+        .section-sub { color: var(--muted); font-size: 1.05rem; max-width: 520px; margin-bottom: 60px; }
 
-        iframe { border-radius: 12px; width: 100%; aspect-ratio: 16/9; border: none; }
-        
-        .view-section { animation: fadeIn 0.4s ease-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .features-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+        }
+        .feature-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px; padding: 30px;
+            transition: border-color 0.3s, transform 0.3s;
+        }
+        .feature-card:hover { border-color: rgba(74,222,128,0.3); transform: translateY(-4px); }
+        .feature-icon { font-size: 2rem; margin-bottom: 15px; }
+        .feature-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 10px; }
+        .feature-card p { color: var(--muted); font-size: 0.95rem; }
 
-        /* Blog Image Placeholders */
+        /* HOW IT WORKS */
+        .how-section { background: var(--surface); padding: 80px 0; }
+        .how-inner { max-width: 1200px; margin: 0 auto; padding: 0 60px; }
+        .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 40px; margin-top: 50px; }
+        .step { text-align: center; }
+        .step-num {
+            width: 60px; height: 60px; border-radius: 50%;
+            background: rgba(74,222,128,0.1);
+            border: 2px solid rgba(74,222,128,0.3);
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem; font-weight: 900; color: var(--accent);
+            margin: 0 auto 20px;
+        }
+        .step h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 8px; }
+        .step p { color: var(--muted); font-size: 0.9rem; }
+
+        /* BLOGS */
+        .blogs-section { padding: 100px 60px; max-width: 1200px; margin: 0 auto; }
+        .blogs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 28px; }
+        .blog-card {
+            background: var(--surface);
+            border: 1px solid var(--border); border-radius: 12px;
+            overflow: hidden; cursor: pointer; transition: all 0.3s;
+            text-decoration: none; display: flex; flex-direction: column;
+        }
+        .blog-card:hover { border-color: rgba(96,165,250,0.4); transform: translateY(-4px); }
         .blog-img {
-            height: 200px;
-            background: linear-gradient(45deg, var(--card-bg), var(--border));
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 3rem;
+            height: 180px;
+            background: linear-gradient(135deg, #1a1f27, #111418);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 3.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .blog-body { padding: 24px; flex: 1; display: flex; flex-direction: column; }
+        .blog-meta { display: flex; gap: 12px; align-items: center; margin-bottom: 12px; }
+        .blog-tag {
+            font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+            background: rgba(96,165,250,0.12); color: var(--accent2);
+            padding: 3px 10px; border-radius: 4px;
+        }
+        .blog-date { font-size: 0.8rem; color: var(--muted); }
+        .blog-card h3 { font-size: 1.05rem; font-weight: 700; line-height: 1.4; margin-bottom: 10px; color: var(--text); }
+        .blog-card p { color: var(--muted); font-size: 0.9rem; flex: 1; }
+        .blog-read { margin-top: 16px; font-size: 0.85rem; color: var(--accent2); font-weight: 600; }
+
+        /* BLOG MODAL */
+        .blog-modal {
+            display: none; position: fixed; inset: 0; z-index: 200;
+            background: rgba(0,0,0,0.85);
+            align-items: flex-start; justify-content: center;
+            overflow-y: auto; padding: 60px 20px;
+        }
+        .blog-modal.open { display: flex; }
+        .blog-modal-content {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 12px; max-width: 750px; width: 100%;
+            padding: 40px; position: relative; margin: auto;
+        }
+        .blog-modal-close {
+            position: absolute; top: 20px; right: 20px;
+            background: var(--surface2); border: 1px solid var(--border);
+            color: var(--muted); width: 36px; height: 36px;
+            border-radius: 50%; cursor: pointer; font-size: 1.1rem;
+            display: flex; align-items: center; justify-content: center;
+            transition: 0.2s;
+        }
+        .blog-modal-close:hover { color: var(--text); border-color: var(--muted); }
+        .blog-modal-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem; font-weight: 700; margin-bottom: 8px; line-height: 1.25;
+        }
+        .blog-modal-meta { color: var(--muted); font-size: 0.85rem; margin-bottom: 30px; }
+        .blog-modal-body { color: #c9d0d9; font-size: 1rem; line-height: 1.85; }
+        .blog-modal-body p { margin-bottom: 18px; }
+        .blog-modal-body h4 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem; color: var(--text); margin: 28px 0 12px;
+        }
+
+        /* CTA */
+        .cta-section {
+            text-align: center; padding: 100px 40px;
+            background: linear-gradient(to bottom, transparent, rgba(74,222,128,0.04), transparent);
+        }
+        .cta-section h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 900; margin-bottom: 16px;
+        }
+        .cta-section p { color: var(--muted); font-size: 1.05rem; max-width: 480px; margin: 0 auto 36px; }
+
+        /* FOOTER */
+        footer {
+            background: var(--surface); border-top: 1px solid var(--border);
+            padding: 40px 60px; display: flex;
+            justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;
+        }
+        .footer-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.1rem; font-weight: 900; color: var(--accent);
+        }
+        footer p { color: var(--muted); font-size: 0.85rem; }
+        .footer-links { display: flex; gap: 24px; }
+        .footer-links a { color: var(--muted); font-size: 0.85rem; text-decoration: none; transition: color 0.2s; }
+        .footer-links a:hover { color: var(--text); }
+
+        @media (max-width: 700px) {
+            nav { padding: 18px 24px; }
+            .nav-links { display: none; }
+            .section, .blogs-section { padding: 70px 24px; }
+            .how-inner { padding: 0 24px; }
+            footer { padding: 30px 24px; flex-direction: column; text-align: center; }
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col">
+<body>
 
-    <!-- Header Navigation -->
-    <nav class="sticky top-0 z-[100] bg-[var(--nav-bg)] border-b border-[var(--border)] px-6 py-4 flex items-center justify-between backdrop-blur-md bg-opacity-80">
-        <div class="flex items-center gap-8">
-            <div class="text-2xl font-bold text-[var(--accent)] cursor-pointer" onclick="navigateTo('landing')">🎓 Portal</div>
-            <div class="hidden lg:flex items-center gap-2">
-                <span class="nav-link" id="btn-landing" onclick="navigateTo('landing')">Home</span>
-                <span class="nav-link" id="btn-blog" onclick="navigateTo('blog')">Stories & Tips</span>
-                <span class="nav-link" id="btn-contact" onclick="navigateTo('contact')">Contact</span>
-                <span class="nav-link" id="btn-app" onclick="navigateTo('app')">Dashboard</span>
-            </div>
+<!-- NAV -->
+<nav>
+    <a href="#" class="nav-logo">🎓 Study Portal</a>
+    <div class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#how">How It Works</a>
+        <a href="#blog">Blog</a>
+        <a href="#contact">Contact</a>
+    </div>
+    <a href="app.html" class="nav-cta">Start Learning →</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+    <div class="hero-badge">🚀 Free for All Students</div>
+    <h1>Learn Smarter, Not Harder</h1>
+    <p>Organize your YouTube courses, track progress with visual heatmaps, take notes, and build an unbreakable study streak — all in one place.</p>
+    <div class="hero-btns">
+        <a href="app.html" class="btn-primary">Start for Free</a>
+        <a href="#features" class="btn-secondary">See Features</a>
+    </div>
+    <div class="hero-stats">
+        <div class="hero-stat"><div class="num">10,000+</div><div class="label">Students Using</div></div>
+        <div class="hero-stat"><div class="num">50,000+</div><div class="label">Hours Tracked</div></div>
+        <div class="hero-stat"><div class="num">100%</div><div class="label">Distraction Free</div></div>
+    </div>
+</section>
+
+<!-- FEATURES -->
+<section class="section" id="features">
+    <div class="section-label">Why Choose Us</div>
+    <h2 class="section-title">Everything a serious student needs</h2>
+    <p class="section-sub">Built by a student, for students. No distractions. No ads. Just pure focused learning.</p>
+    <div class="features-grid">
+        <div class="feature-card">
+            <div class="feature-icon">📺</div>
+            <h3>YouTube Course Organizer</h3>
+            <p>Add any YouTube lecture link and watch it inside a clean, distraction-free player. No recommended videos. No algorithm traps.</p>
         </div>
-
-        <div class="flex items-center gap-4">
-            <button onclick="toggleTheme()" class="p-2 hover:bg-[var(--bg-dark)] rounded-full transition-colors">🌓</button>
-            <div id="auth-buttons" class="flex gap-2">
-                <button onclick="navigateTo('auth')" class="px-4 py-2 text-sm font-semibold border border-[var(--border)] rounded-lg hover:bg-[var(--card-bg)] transition-all">Sign In</button>
-                <button onclick="navigateTo('auth')" class="px-4 py-2 text-sm font-semibold bg-[var(--accent)] text-white rounded-lg hover:opacity-90 transition-all">Join Free</button>
-            </div>
-            <div id="user-profile" class="hidden flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-[var(--accent)] flex items-center justify-center text-white font-bold" id="user-initial">?</div>
-            </div>
+        <div class="feature-card">
+            <div class="feature-icon">🌿</div>
+            <h3>Study Heatmap</h3>
+            <p>Visual GitHub-style heatmap shows your daily consistency over 12 months. Watch your green streak grow and stay motivated.</p>
         </div>
-    </nav>
-
-    <!-- VIEWS CONTAINER -->
-    <main class="flex-1">
-
-        <!-- 1. Landing View -->
-        <section id="view-landing" class="view-section hero-gradient py-20 px-6">
-            <div class="max-w-6xl mx-auto text-center space-y-8">
-                <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight">Focus on Learning, <br><span class="text-[var(--accent)]">Not Distractions.</span></h1>
-                <p class="text-xl text-[var(--text-muted)] max-w-2xl mx-auto">Organize your YouTube learning, track consistency with heatmaps, and maintain focus with our distraction-free study portal.</p>
-                <div class="flex justify-center gap-4">
-                    <button onclick="navigateTo('auth')" class="px-8 py-4 bg-[var(--accent)] text-white rounded-full font-bold text-lg shadow-lg hover:scale-105 transition-all">Start Your Streak</button>
-                    <button onclick="navigateTo('blog')" class="px-8 py-4 border border-[var(--border)] rounded-full font-bold text-lg hover:bg-[var(--card-bg)] transition-all">Real Student Stories</button>
-                </div>
-                
-                <div class="grid md:grid-cols-3 gap-8 mt-24">
-                    <div class="custom-card p-8 text-left">
-                        <div class="text-4xl mb-4">📈</div>
-                        <h3 class="text-xl font-bold mb-2">Track Progress</h3>
-                        <p class="text-[var(--text-muted)]">GitHub-style heatmaps show your daily study consistency and help you maintain long streaks.</p>
-                    </div>
-                    <div class="custom-card p-8 text-left">
-                        <div class="text-4xl mb-4">🚫</div>
-                        <h3 class="text-xl font-bold mb-2">No Distractions</h3>
-                        <p class="text-[var(--text-muted)]">Watch educational content without recommended videos or comments pulling you away from work.</p>
-                    </div>
-                    <div class="custom-card p-8 text-left">
-                        <div class="text-4xl mb-4">📝</div>
-                        <h3 class="text-xl font-bold mb-2">Cloud Notes</h3>
-                        <p class="text-[var(--text-muted)]">Take timestamped notes right next to your video and sync them across all your devices.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- 2. Blog View -->
-        <section id="view-blog" class="view-section hidden py-16 px-6 max-w-6xl mx-auto">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl font-bold mb-4">The Student Life Blog</h2>
-                <p class="text-[var(--text-muted)]">Real stories, hard truths, and study hacks from students like you.</p>
-            </div>
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8" id="blog-grid">
-                <!-- Blog cards will be injected by JS -->
-            </div>
-        </section>
-
-        <!-- 3. Contact View -->
-        <section id="view-contact" class="view-section hidden py-16 px-6 max-w-xl mx-auto">
-            <div class="custom-card p-10 space-y-6">
-                <h2 class="text-3xl font-bold">Contact Support</h2>
-                <p class="text-[var(--text-muted)]">Have issues or suggestions? We'd love to hear from you.</p>
-                <form class="space-y-4" onsubmit="event.preventDefault(); alert('Message sent successfully!');">
-                    <div>
-                        <label class="block text-sm font-medium mb-1">Name</label>
-                        <input type="text" placeholder="Your Name" class="w-full bg-[var(--bg-dark)] border border-[var(--border)] rounded-lg p-3 outline-none focus:border-[var(--accent)]">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium mb-1">Email</label>
-                        <input type="email" placeholder="email@example.com" class="w-full bg-[var(--bg-dark)] border border-[var(--border)] rounded-lg p-3 outline-none focus:border-[var(--accent)]">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium mb-1">Message</label>
-                        <textarea rows="4" placeholder="How can we help?" class="w-full bg-[var(--bg-dark)] border border-[var(--border)] rounded-lg p-3 outline-none focus:border-[var(--accent)]"></textarea>
-                    </div>
-                    <button class="w-full py-3 bg-[var(--accent)] text-white font-bold rounded-lg hover:opacity-90 transition-all">Send Message</button>
-                </form>
-            </div>
-        </section>
-
-        <!-- 4. Auth View -->
-        <section id="view-auth" class="view-section hidden py-20 px-6 max-w-md mx-auto">
-            <div class="custom-card p-8 text-center space-y-6">
-                <h2 class="text-2xl font-bold">Join the Study Streak</h2>
-                <p class="text-[var(--text-muted)]">Login or Create an account to save your progress.</p>
-                <button onclick="handleLogin()" class="w-full py-4 bg-[#238636] text-white font-bold rounded-lg hover:brightness-110 transition-all flex items-center justify-center gap-3">
-                    🚀 Continue to Dashboard
-                </button>
-                <p class="text-xs text-[var(--text-muted)]">Anonymous session enabled for testing</p>
-            </div>
-        </section>
-
-        <!-- 5. App Dashboard View -->
-        <section id="view-app" class="view-section hidden flex flex-col h-screen overflow-hidden">
-            <div class="flex-1 flex overflow-hidden">
-                <!-- Sidebar -->
-                <aside class="w-80 bg-[var(--sidebar-bg)] border-r border-[var(--border)] hidden lg:flex flex-col">
-                    <div class="p-6 border-b border-[var(--border)]">
-                        <h3 class="font-bold flex justify-between items-center text-sm">
-                            MY COURSES
-                            <button onclick="showModal('course-modal')" class="bg-[var(--accent)] text-[10px] px-2 py-1 rounded text-white">+ NEW</button>
-                        </h3>
-                        <div id="course-list" class="mt-4 space-y-1 overflow-y-auto max-h-[250px] no-scrollbar"></div>
-                    </div>
-                    <div class="p-6 flex-1 overflow-hidden flex flex-col">
-                        <h3 class="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-widest mb-4">LECTURES</h3>
-                        <div id="topic-list" class="flex-1 overflow-y-auto space-y-1 no-scrollbar text-sm"></div>
-                    </div>
-                </aside>
-
-                <!-- Dashboard Content -->
-                <div class="flex-1 overflow-y-auto p-8" id="app-content">
-                    <div id="dashboard-home" class="space-y-12">
-                        <h2 class="text-3xl font-bold" id="welcome-msg">Dashboard</h2>
-                        <div class="grid md:grid-cols-3 gap-6">
-                            <div class="custom-card p-6"><span class="text-xs text-[var(--text-muted)]">Today's Focus</span><div class="text-3xl font-bold" id="stat-today">0m</div></div>
-                            <div class="custom-card p-6"><span class="text-xs text-[var(--text-muted)]">Total Hours</span><div class="text-3xl font-bold" id="stat-weekly">0h</div></div>
-                            <div class="custom-card p-6"><span class="text-xs text-[var(--text-muted)]">Consistency</span><div class="text-3xl font-bold text-[var(--pink-text)]" id="stat-streak">Active</div></div>
-                        </div>
-                        <div class="custom-card p-6">
-                            <h4 class="font-bold mb-4">Last 90 Days Consistency</h4>
-                            <div id="heatmap-container" class="flex flex-wrap gap-1"></div>
-                        </div>
-                        <div class="custom-card p-6">
-                            <h4 class="font-bold mb-4">Daily Goals</h4>
-                            <div class="flex gap-2 mb-4">
-                                <input type="text" id="goal-input" placeholder="What's next?" class="flex-1 bg-[var(--bg-dark)] border border-[var(--border)] rounded px-3 py-2 text-sm">
-                                <button onclick="addGoal()" class="bg-[var(--accent)] px-4 rounded font-bold text-white">+</button>
-                            </div>
-                            <div id="goal-list" class="space-y-2"></div>
-                        </div>
-                    </div>
-
-                    <div id="player-view" class="hidden space-y-6 max-w-5xl mx-auto">
-                        <div class="flex items-center justify-between">
-                            <h2 id="current-topic-title" class="text-2xl font-bold">Topic</h2>
-                            <button onclick="showModal('topic-modal')" class="bg-[var(--accent)] px-4 py-2 rounded text-sm font-bold text-white">+ Lecture</button>
-                        </div>
-                        <iframe id="main-player" src="" allowfullscreen></iframe>
-                        <div class="flex gap-4">
-                            <button id="complete-btn" onclick="toggleComplete()" class="flex-1 py-4 bg-[var(--success)] text-white font-bold rounded-xl shadow-lg">✅ Complete</button>
-                            <button onclick="deleteTopic()" class="px-6 py-4 border border-[var(--danger)] text-[var(--danger)] rounded-xl">🗑️</button>
-                        </div>
-                        <textarea id="notes-area" oninput="autoSaveNotes()" placeholder="Lecture notes..." class="w-full h-48 bg-[var(--card-bg)] border border-[var(--border)] rounded-xl p-4 text-sm outline-none focus:border-[var(--accent)]"></textarea>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <!-- AdSense Friendly Footer -->
-    <footer class="bg-[var(--sidebar-bg)] border-t border-[var(--border)] py-12 px-6">
-        <div class="max-w-6xl mx-auto grid md:grid-cols-4 gap-8">
-            <div class="col-span-2">
-                <div class="text-xl font-bold text-[var(--accent)] mb-4">Pro Study Portal</div>
-                <p class="text-[var(--text-muted)] max-w-sm">Built for students who take their growth seriously. Master any skill without the noise of typical social learning platforms.</p>
-            </div>
-            <div>
-                <h4 class="font-bold mb-4">Explore</h4>
-                <ul class="text-[var(--text-muted)] space-y-2 text-sm">
-                    <li class="hover:text-[var(--accent)] cursor-pointer" onclick="navigateTo('landing')">Home</li>
-                    <li class="hover:text-[var(--accent)] cursor-pointer" onclick="navigateTo('blog')">Student Stories</li>
-                    <li class="hover:text-[var(--accent)] cursor-pointer" onclick="navigateTo('contact')">Support</li>
-                </ul>
-            </div>
-            <div>
-                <h4 class="font-bold mb-4">Legal</h4>
-                <ul class="text-[var(--text-muted)] space-y-2 text-sm">
-                    <li class="hover:text-[var(--accent)] cursor-pointer">Privacy Policy</li>
-                    <li class="hover:text-[var(--accent)] cursor-pointer">Terms & Conditions</li>
-                </ul>
-            </div>
+        <div class="feature-card">
+            <div class="feature-icon">📝</div>
+            <h3>Per-Lecture Notes</h3>
+            <p>Write and save notes for every single lecture. Your notes are stored securely in the cloud — access from anywhere.</p>
         </div>
-        <div class="text-center mt-12 pt-8 border-t border-[var(--border)] text-[var(--text-muted)] text-xs">
-            &copy; 2025 Study Portal | Created by Shivam Kumar (TIT Excellence)
+        <div class="feature-card">
+            <div class="feature-icon">🎯</div>
+            <h3>Daily Goal Tracker</h3>
+            <p>Set your daily study tasks and tick them off as you go. Clarity on what to do next keeps you in flow.</p>
         </div>
-    </footer>
+        <div class="feature-card">
+            <div class="feature-icon">✅</div>
+            <h3>Progress Tracking</h3>
+            <p>Mark lectures as complete, see your course progress bar fill up, and know exactly where you left off every time.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">☁️</div>
+            <h3>Cloud Sync</h3>
+            <p>All your data is safely stored on the cloud. Login from your phone, laptop, or tablet — everything is always synced.</p>
+        </div>
+    </div>
+</section>
 
-    <!-- Modals -->
-    <div id="course-modal" class="fixed inset-0 bg-black/80 z-[200] hidden items-center justify-center p-4">
-        <div class="custom-card p-8 w-full max-w-sm">
-            <h3 class="text-xl font-bold mb-4">New Course</h3>
-            <input type="text" id="new-course-name" placeholder="Course Name" class="w-full bg-[var(--bg-dark)] border border-[var(--border)] rounded p-3 mb-4 outline-none">
-            <div class="flex gap-2">
-                <button onclick="hideModal('course-modal')" class="flex-1 py-2 border border-[var(--border)] rounded">Cancel</button>
-                <button onclick="createCourse()" class="flex-1 py-2 bg-[var(--accent)] text-white rounded font-bold">Create</button>
+<!-- HOW IT WORKS -->
+<div class="how-section" id="how">
+    <div class="how-inner">
+        <div class="section-label">Simple Process</div>
+        <h2 class="section-title">Up and running in 3 steps</h2>
+        <div class="steps">
+            <div class="step">
+                <div class="step-num">1</div>
+                <h3>Create an Account</h3>
+                <p>Sign up with your email or Google account in seconds. No credit card. Completely free.</p>
+            </div>
+            <div class="step">
+                <div class="step-num">2</div>
+                <h3>Add Your Courses</h3>
+                <p>Create a course, then paste YouTube lecture links one by one. Organize your entire syllabus.</p>
+            </div>
+            <div class="step">
+                <div class="step-num">3</div>
+                <h3>Study & Track</h3>
+                <p>Watch, take notes, mark complete, and watch your heatmap turn green day by day.</p>
             </div>
         </div>
     </div>
+</div>
 
-    <div id="topic-modal" class="fixed inset-0 bg-black/80 z-[200] hidden items-center justify-center p-4">
-        <div class="custom-card p-8 w-full max-w-md">
-            <h3 class="text-xl font-bold mb-4">Add Topic</h3>
-            <input type="text" id="new-topic-title" placeholder="Topic Title" class="w-full bg-[var(--bg-dark)] border border-[var(--border)] rounded p-3 mb-2 outline-none">
-            <input type="text" id="new-topic-url" placeholder="YouTube Link" class="w-full bg-[var(--bg-dark)] border border-[var(--border)] rounded p-3 mb-4 outline-none">
-            <div class="flex gap-2">
-                <button onclick="hideModal('topic-modal')" class="flex-1 py-2 border border-[var(--border)] rounded">Cancel</button>
-                <button onclick="addTopic()" class="flex-1 py-2 bg-[var(--accent)] text-white rounded font-bold">Add</button>
-            </div>
-        </div>
+<!-- BLOG -->
+<section class="blogs-section" id="blog">
+    <div class="section-label">Student Blog</div>
+    <h2 class="section-title">Tips, stories & study science</h2>
+    <p class="section-sub" style="margin-bottom: 50px;">Real insights from a student who's been in the grind — written to help you succeed.</p>
+    <div class="blogs-grid" id="blog-grid"></div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+    <h2>Ready to transform your study habits?</h2>
+    <p>Join thousands of students who stopped scrolling and started learning seriously.</p>
+    <a href="app.html" class="btn-primary" style="font-size: 1.1rem; padding: 16px 44px;">Get Started — It's Free</a>
+</section>
+
+<!-- FOOTER -->
+<footer id="contact">
+    <div>
+        <div class="footer-logo">🎓 Pro Study Portal</div>
+        <p style="margin-top: 6px;">Built with ❤️ by Shivam Kumar, TIT(Excellence)</p>
     </div>
-
-    <!-- Blog Detail Modal -->
-    <div id="blog-modal" class="fixed inset-0 bg-black/80 z-[200] hidden items-center justify-center p-4 overflow-y-auto">
-        <div class="custom-card p-8 w-full max-w-3xl my-8 relative">
-            <button onclick="hideModal('blog-modal')" class="absolute top-4 right-4 text-2xl text-[var(--text-muted)] hover:text-white">×</button>
-            <div id="blog-content" class="space-y-6">
-                <!-- Content injected by JS -->
-            </div>
-        </div>
+    <div class="footer-links">
+        <a href="mailto:tszone@zohomail.in">📧 tszone@zohomail.in</a>
+        <a href="#blog">Blog</a>
+        <a href="app.html">App</a>
     </div>
+    <p>© 2025 Pro Study Portal. All rights reserved.</p>
+</footer>
 
-    <script type="module">
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js';
-        import { getAuth, signInAnonymously, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
-        import { getFirestore, doc, setDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
+<!-- BLOG MODAL -->
+<div class="blog-modal" id="blog-modal" onclick="closeBlog(event)">
+    <div class="blog-modal-content">
+        <button class="blog-modal-close" onclick="document.getElementById('blog-modal').classList.remove('open')">✕</button>
+        <div class="blog-modal-title" id="modal-title"></div>
+        <div class="blog-modal-meta" id="modal-meta"></div>
+        <div class="blog-modal-body" id="modal-body"></div>
+    </div>
+</div>
 
-        // Configuration
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'portal-v3-final';
-        const firebaseConfig = JSON.parse(__firebase_config);
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+<script>
+const blogs = [
+    {
+        emoji: "🔥",
+        tag: "Motivation",
+        date: "December 5, 2024",
+        title: "Why I Almost Quit Engineering in My Second Year — And What Changed Everything",
+        excerpt: "Second year hit me like a truck. Here's the honest story of how I went from academic crisis to building my own study tool.",
+        body: `
+            <p>I still remember the exact night. It was a Tuesday in October 2024. My DBMS exam was in four days. I had a thick textbook open in front of me, a YouTube playlist with 40 lectures waiting, and absolutely zero motivation to start. I had been sitting at my desk for three hours, and in those three hours I had somehow managed to watch two cooking videos, read seven Instagram reels, and order food I didn't even end up eating.</p>
 
-        let currentUser = null;
-        let userData = { courses: [], goals: [], studyLogs: {}, theme: 'dark' };
-        let activeView = 'landing';
-        let activeCourseIdx = -1;
-        let activeTopicIdx = -1;
-        let sessionSeconds = 0;
+            <p>That was the lowest point of my second year at TIT(Excellence). And honestly? I know I'm not alone. Every engineering student who reads this has had that night. Maybe it was DSA for you. Maybe it was Signals & Systems, or Engineering Mathematics. But we've all had that night where the gap between where we are and where we need to be feels absolutely impossible to cross.</p>
 
-        // Blog Data (Stories & Tips)
-        const blogPosts = [
-            {
-                id: 1,
-                date: "Feb 22, 2025",
-                title: "Woh Raat Jab Maine 3 AM Tak Java Sikha",
-                category: "Story",
-                emoji: "💻",
-                short: "Main ek raat code kar raha tha, par result nahi aa raha tha. Phir jo hua...",
-                content: `Main ek CSE student hoon aur Java ke loops mere sar ke upar se jaate the. Us raat 11 baje maine decide kiya ki aaj toh logic samajh kar hi rahunga. YouTube khola, ek lecture dekha, phir doosra. 2 baje meri aankhein band ho rahi thi par mera man nahi mana. Jab 3 baje finally 'Hello World' loop se 10 baar print hua, wo khushi alag hi thi.
-                <br><br><strong>Lesson:</strong> Kabhi kabhi 'one more try' hi wo magic hota hai jo result laata hai. AI se nahi, khud se logic banane mein asli mazza hai.`
-            },
-            {
-                id: 2,
-                date: "Feb 20, 2025",
-                title: "YouTube: Study Friend ya Dusman?",
-                category: "Tips",
-                emoji: "🚫",
-                short: "YouTube par padhne gaye aur CarryMinati ki video pe khatam kiya? Ise avoid kaise karein.",
-                content: `Hum sab ke saath aisa hota hai. Padhne baithe the 'Data Structures' aur recommended videos mein 'Top 10 Ghost Stories' dekhne lage. Maine isse bachne ke liye ye portal banaya. 
-                <br><br><strong>Mera Hack:</strong> Hamesha ek playlist bana lo pehle hi, aur distract hone se pehle khud ko yaad dilao ki heatmap mein aaj ka graph dark karna hai.`
-            },
-            {
-                id: 3,
-                date: "Feb 18, 2025",
-                title: "Failed in Internals? Chill, ye end nahi hai.",
-                category: "Motivation",
-                emoji: "🧘",
-                short: "Mere internal exams mein marks bohot bure aaye the. Maine kaise handle kiya.",
-                content: `Jab result aaya, mera mood bohot kharab tha. Laga ki main engineer ban bhi paunga ya nahi. Par mere senior ne kaha ki 'College exams are just checks, not final destinations'. Maine us din se focus skill-building par shift kiya, exams par nahi. 
-                <br><br>Agar aap aaj fail hue ho, toh rona band karo aur ek naya course start karo. Reality ye hai ki industry ko aapki degree se zyada aapka code pasand hai.`
-            },
-            {
-                id: 4,
-                date: "Feb 15, 2025",
-                title: "Rubber Duck Debugging: Ye kya bala hai?",
-                category: "Hacks",
-                emoji: "🦆",
-                short: "Apne table par ek khilona duck rakho. Wo aapka code fix karegi.",
-                content: `Ye ek purana dev secret hai. Jab mera code nahi chalta, main use apni ek imaginary duck ko samjhata hoon. 'Dekho ducky, yahan main loop chala raha hoon...'. Aur samjhate samjhate hi galti mil jaati hai.
-                <br><br>Aap bhi try karo, kisi insaan ko pareshan karne se achha hai apne table ki kisi cheez ko samjhao.`
-            },
-            {
-                id: 5,
-                date: "Feb 12, 2025",
-                title: "Morning Person vs Night Owl: Kaun better hai?",
-                category: "Debate",
-                emoji: "🦉",
-                short: "Maine dono try kiya, aur result shocking tha.",
-                content: `Duniya kehti hai 5 AM utho. Maine 1 mahine kiya, din bhar nind aati thi. Phir maine raat ko 12 se 3 baje tak padhna start kiya. Mere liye night-time shanti zyada kaam aayi. 
-                <br><br>Conclusion? Kisi guru ki mat suno, apni body clock ki suno. Agar aapko raat ko shanti milti hai, toh wahi sahi hai.`
-            },
-            {
-                id: 6,
-                date: "Feb 09, 2025",
-                title: "Handwritten Notes vs Digital? My Secret.",
-                category: "Study",
-                emoji: "✍️",
-                short: "iPad par likhu ya ₹10 wala register pe?",
-                content: `Maine iPad try kiya, Laptop try kiya par jo feeling pen aur paper ki hai wo alag hai. Research kehti hai ki likhne se cheezein dimaag mein zyada der tak rehti hai. 
-                <br><br>Main hamesha tough topics ko ek baar paper par zaroor likhta hoon. Digital sirf reference ke liye rakho.`
-            },
-            {
-                id: 7,
-                date: "Feb 05, 2025",
-                title: "Group Study: Masti ya Padhaai?",
-                category: "Opinion",
-                emoji: "👥",
-                short: "4 dost milke kya padhte hain? Reality check.",
-                content: `Group study mein 10 min padhai hoti hai aur 50 min chai ki tapri par baatein. Agar aapko sach mein focus karna hai, toh akele padho. Group sirf tab use karo jab kisi ko concept samjhana ho. 
-                <br><br>Mera anubhav toh yahi hai ki Exam se 1 raat pehle wala group study sirf syllabus dekhne ke kaam aata hai.`
-            },
-            {
-                id: 8,
-                date: "Feb 01, 2025",
-                title: "The 2-Minute Rule for Procrastination",
-                category: "Hack",
-                emoji: "⏱️",
-                short: "Aalas ko bhagane ka sabse asaan tarika.",
-                content: `Agar koi kaam 2 minute se kam ka hai, toh use abhi kar lo. Main jab coding start karne mein aalas karta hoon, toh bas itna kehta hoon 'sirf 2 minute code dekhunga'. Phir flow apne aap ban jaata hai. 
-                <br><br>Try it today! Heatmap mein aaj ki entry daalne mein sirf 2 min lagenge.`
-            },
-            {
-                id: 9,
-                date: "Jan 28, 2025",
-                title: "Financial Literacy for Students: Bachat kaise karein?",
-                category: "Life",
-                emoji: "💸",
-                short: "Samosa kam khao, skills pe invest karo.",
-                content: `College life mein paise hamesha kam lagte hain. Maine ek rule banaya - 'Skill before Chill'. Pehle mahine ka bachat se ek sasta course lo, phir party karo. Chote-chote paise invest karna abhi se seekho. 
-                <br><br>Aaj ke ₹100 kal ke ₹1000 ban sakte hain agar sahi jagah use karo.`
-            },
-            {
-                id: 10,
-                date: "Jan 25, 2025",
-                title: "My first website experience",
-                category: "Story",
-                emoji: "🚀",
-                short: "Jab maine pehli baar index.html file banayi.",
-                content: `Jab screen par 'Hello World' pehli baar pink color mein aaya, mujhe laga main hacker ban gaya hoon. Wo purana logic aur wo purani file aaj bhi mere desktop par hai. Padhai boring ho sakti hai par build karna adventurous hai. 
-                <br><br>Daro mat, bas code likhte raho. Ek din aap bhi ek portal banaoge!`
-            }
-        ];
+            <h4>The Problem Wasn't Laziness</h4>
 
-        // Navigation Engine
-        window.navigateTo = (view) => {
-            activeView = view;
-            const views = ['landing', 'blog', 'contact', 'auth', 'app'];
-            views.forEach(v => {
-                document.getElementById(`view-${v}`).classList.add('hidden');
-                const navBtn = document.getElementById(`btn-${v}`);
-                if (navBtn) navBtn.classList.remove('active');
-            });
-            
-            document.getElementById(`view-${view}`).classList.remove('hidden');
-            const activeNav = document.getElementById(`btn-${view}`);
-            if (activeNav) activeNav.classList.add('active');
-            
-            if (view === 'app') document.querySelector('footer').classList.add('hidden');
-            else document.querySelector('footer').classList.remove('hidden');
+            <p>That's the thing everyone gets wrong. Teachers say "study more." Parents say "focus." Friends say "just put your phone away." But none of them understand that the problem is not willpower — it's the environment. When I opened YouTube to watch a DSA lecture, the algorithm would serve me a thumbnail of a cricketer doing something funny right next to my playlist. And I'd think, "I'll just watch this one thing." Three hours later, the lecture was still at zero.</p>
 
-            if (view === 'blog') renderBlogs();
-            window.scrollTo(0, 0);
-        };
+            <p>I started researching productivity. I read about the Pomodoro Technique, about habit stacking, about deep work. And I realized something important — the students who consistently perform well are not more disciplined than the rest of us. They have simply built environments that make distraction harder than focused work. They remove the friction from studying and add friction to wasting time.</p>
 
-        // Render Blogs
-        function renderBlogs() {
-            const grid = document.getElementById('blog-grid');
-            grid.innerHTML = blogPosts.map(post => `
-                <div class="custom-card p-6 cursor-pointer group" onclick="openBlog(${post.id})">
-                    <div class="blog-img mb-4">${post.emoji}</div>
-                    <div class="flex items-center gap-2 mb-3">
-                        <span class="text-[var(--accent)] text-[10px] font-bold uppercase bg-[var(--accent)]/10 px-2 py-1 rounded">${post.category}</span>
-                        <span class="text-[var(--text-muted)] text-[10px]">${post.date}</span>
-                    </div>
-                    <h3 class="text-xl font-bold mb-3 group-hover:text-[var(--accent)] transition-colors">${post.title}</h3>
-                    <p class="text-[var(--text-muted)] text-sm line-clamp-2">${post.short}</p>
+            <h4>The Idea That Started Everything</h4>
+
+            <p>I was learning web development on the side — HTML, CSS, JavaScript, Firebase. And one night, after another failed study session, I had a thought: what if I built something that let me watch YouTube lectures inside a clean interface with no sidebar, no recommendations, no autoplay? Just the lecture, my notes, and a simple progress tracker?</p>
+
+            <p>I started building Pro Study Portal as a personal project in November 2024. It was messy at first — the code was spaghetti and the UI was ugly. But it worked. For the first time in weeks, I sat down, opened my own portal, added a lecture, and watched the entire thing without getting distracted once. I took notes in the notes section. I marked it complete. And I felt something I hadn't felt in months: progress.</p>
+
+            <h4>How It Changed My Semester</h4>
+
+            <p>By the time my end-semester exams arrived in December, I had completed three full courses on the portal. The heatmap was filling up with green. I could see exactly how many lectures I had watched, how many were left, and what my notes said for each one. The anxiety of "I don't know where to start" was gone because the portal told me exactly where I had left off.</p>
+
+            <p>My exam results reflected it. I went from someone who was barely scraping through to someone who genuinely understood the material. And I realized: the tool doesn't just help you study. It makes studying feel meaningful. Every completed lecture, every green heatmap cell, every saved note is a tiny reward that your brain can see.</p>
+
+            <h4>To Every Student Who Has Had That Night</h4>
+
+            <p>If you're in that spot right now — overwhelmed, behind, wondering if you're even capable — I want you to know that you are. You just need the right system. Not more willpower. Not more guilt. A system that makes studying easier than not studying.</p>
+
+            <p>That's what Pro Study Portal is. It's not a magic pill. It's a better environment. And sometimes, that's all the difference in the world.</p>
+
+            <p>Start today. Even one lecture. Even 20 minutes. The heatmap will thank you.</p>
+        `
+    },
+    {
+        emoji: "🧠",
+        tag: "Science of Learning",
+        date: "December 12, 2024",
+        title: "The Science Behind Why YouTube is So Addictive (And How to Use It for Study Instead)",
+        excerpt: "YouTube's algorithm is designed to keep you watching. Understanding the science helps you fight back — and use the platform for good.",
+        body: `
+            <p>YouTube is one of the most powerful educational resources ever created. And it is also one of the most effective procrastination machines in human history. The same platform that hosts lectures by IIT professors and MIT OpenCourseWare also hosts an endless stream of content that has been precisely engineered to capture and hold your attention. Understanding how this works is the first step to reclaiming your study time.</p>
+
+            <h4>The Dopamine Loop</h4>
+
+            <p>Every time you receive something unexpected and pleasurable — a funny video, an interesting thumbnail, a satisfying video essay — your brain releases a small burst of dopamine. Dopamine is not just the "pleasure chemical." It is more accurately the "anticipation chemical." Your brain releases dopamine not just when you get the reward, but when it predicts that a reward is coming. This is why scrolling through YouTube thumbnails feels good even before you click on anything. Your brain is already anticipating the potential pleasure of each video.</p>
+
+            <p>YouTube's recommendation algorithm is trained on billions of hours of watch data. Its single goal is to maximize the time you spend on the platform. It has learned, with superhuman precision, exactly which videos to show you next to keep you watching. This is not a malicious conspiracy — it is just an optimization algorithm doing what it was designed to do. But the result is that the platform is essentially a dopamine machine designed to make leaving feel difficult.</p>
+
+            <h4>The Context-Switching Problem</h4>
+
+            <p>Here is something students rarely consider: every time you switch from watching a lecture to watching an entertainment video, your brain pays a "switching cost." Your brain was in learning mode — processing, encoding, connecting new information to existing knowledge. When you suddenly switch to watching something funny, your brain has to abandon that focused processing state. And getting back into it requires significant cognitive effort. Research suggests this re-entry cost can take up to 23 minutes of full re-focus time.</p>
+
+            <p>This means that a single distraction video in the middle of your study session doesn't just cost you three minutes. It potentially costs you 26 minutes of effective study time. Suddenly, a "quick break" becomes an hour of lost productivity.</p>
+
+            <h4>How to Use YouTube for Learning Without Getting Trapped</h4>
+
+            <p>The solution is not to avoid YouTube. The solution is to change your relationship with it. Here's what works:</p>
+
+            <p>First, watch educational content inside an environment that removes the recommendation sidebar. This is exactly why Pro Study Portal embeds YouTube videos directly inside the portal player — you see only the lecture, nothing else. No "Up Next." No sidebar. No autoplay to entertainment content.</p>
+
+            <p>Second, create a study playlist before you sit down. Decide what you are going to watch before you open the platform. When you start your session with a clear intention, you are much less likely to drift. The portal's course organizer lets you do exactly this — build your lecture list in advance and work through it systematically.</p>
+
+            <p>Third, take notes as you watch. The act of writing forces active engagement with the material. You cannot passively absorb a lecture while writing about it. Students who take notes during video lectures retain approximately 40% more information than those who simply watch. The portal has a built-in notes section for every lecture precisely for this reason.</p>
+
+            <p>YouTube is not your enemy. The algorithm is. Build a wall between yourself and the algorithm, and you'll find that YouTube is one of the best teachers on the planet.</p>
+        `
+    },
+    {
+        emoji: "⏰",
+        tag: "Productivity",
+        date: "December 20, 2024",
+        title: "The Pomodoro Technique: How 25 Minutes Changed My Entire Study Routine",
+        excerpt: "I was skeptical when I first heard about studying in 25-minute blocks. Six weeks later, it's the only way I study.",
+        body: `
+            <p>I want to be completely honest: when a classmate first told me about the Pomodoro Technique, I thought it was one of those silly productivity gimmicks that people who don't actually study talk about. Study for 25 minutes, take a 5-minute break? I'm a computer science engineering student. I have Data Structures, DBMS, OOP, and a dozen other subjects to get through. What's 25 minutes going to do?</p>
+
+            <p>I was very wrong. And discovering how wrong I was changed everything about how I approach studying.</p>
+
+            <h4>What Is the Pomodoro Technique?</h4>
+
+            <p>The Pomodoro Technique was developed by Francesco Cirillo in the late 1980s. The method is simple: choose a single task, set a timer for 25 minutes, work on that task with complete focus until the timer rings, then take a 5-minute break. Every four "pomodoros" (25-minute sessions), you take a longer break of 15 to 30 minutes.</p>
+
+            <p>The name comes from the Italian word for tomato — Cirillo used a tomato-shaped kitchen timer when he developed the method as a university student. The technique is now one of the most studied and validated productivity methods in cognitive psychology research.</p>
+
+            <h4>Why It Actually Works — The Science</h4>
+
+            <p>The brain is not designed for sustained, uninterrupted focus. Research on cognitive performance consistently shows that sustained attention degrades significantly after about 20 to 30 minutes of continuous work on a single task. After this point, you're not studying less — you're studying in a kind of foggy, semi-focused state where information is entering your eyes and ears but not being properly encoded into memory.</p>
+
+            <p>Planned breaks reset your attentional resources. A 5-minute break where you stand up, stretch, or simply rest your eyes allows your prefrontal cortex — the part of your brain responsible for sustained focus — to recover. When you return to the task, you're operating at full cognitive capacity again, not at 60% capacity.</p>
+
+            <h4>How I Apply It to Engineering Study</h4>
+
+            <p>For lecture videos, I match my pomodoros to lecture length. Most YouTube engineering lectures are between 20 and 40 minutes. A 30-minute lecture is almost exactly one pomodoro. I watch the full lecture in the Pro Study Portal, take notes throughout, and then when the lecture ends I take my 5-minute break. Then I start the next lecture fresh.</p>
+
+            <p>For reading and problem-solving — like when I'm working through DBMS queries or DSA problems — I set my timer for 25 minutes, pick a specific set of problems to solve, and work through them without touching my phone. When the timer rings, I get up, drink water, walk for 3 minutes, and come back. After four sessions, I take a proper 20-minute break.</p>
+
+            <p>The results have been striking. In a three-hour study session using Pomodoro, I accomplish significantly more than I used to in four or five unstructured hours. More importantly, I feel less tired at the end. The breaks prevent the deep mental fatigue that used to hit me after long study sessions.</p>
+
+            <h4>Getting Started Today</h4>
+
+            <p>You don't need a tomato-shaped timer. Your phone works. Set it for 25 minutes. Open your study portal, pick one lecture, and commit to watching it with full focus until the timer rings. Don't open any other tab. Don't check your phone. Just one thing, for 25 minutes.</p>
+
+            <p>It sounds almost embarrassingly simple. But simplicity is the point. The Pomodoro Technique works not because it's clever, but because it's honest about how human attention actually works. Give it one week. You won't go back to unstructured studying.</p>
+        `
+    },
+    {
+        emoji: "📊",
+        tag: "Study Habits",
+        date: "January 8, 2025",
+        title: "How I Covered an Entire Semester's Syllabus in 30 Days Using a Study Portal",
+        excerpt: "Backlog stress is real. Here is a practical, honest guide to covering huge amounts of content systematically without burning out.",
+        body: `
+            <p>Let me paint you a picture. It is March. Your end-semester exams are 35 days away. You open your syllabus and realize you have covered approximately 40% of the material in the classroom. The remaining 60% is a mountain of topics, videos, textbooks, and previous year papers that feels completely overwhelming. Sound familiar?</p>
+
+            <p>This is the backlog crisis that almost every engineering student faces at least once. And the students who survive it — even thrive in it — are not the ones who panic the most or study the longest. They are the ones who have a system.</p>
+
+            <h4>Step 1: Complete Audit First, Study Second</h4>
+
+            <p>Before you study a single thing, spend two hours doing a complete audit of what you need to cover. Open each subject's syllabus. List every module and topic. Estimate how many YouTube lecture hours cover each topic. Then calculate your total required viewing and study hours for all subjects combined.</p>
+
+            <p>This sounds scary, but it is actually liberating. Most students operate with a vague, formless dread of "all the things I haven't studied." When you make it concrete — "I need 18 hours for DSA, 12 hours for DBMS, 10 hours for COA" — it becomes a math problem instead of an emotional crisis. And math problems have solutions.</p>
+
+            <h4>Step 2: Build Your Course Library in the Portal</h4>
+
+            <p>Once you have your topic list, create one course in Pro Study Portal for each subject. Then go to YouTube and find the best lecture series for each subject — there are excellent playlists from channels like Apna College, Gate Smashers, Jenny's Lectures, and Abdul Bari for most CS subjects. Add each lecture link to the relevant course in your portal.</p>
+
+            <p>Now you have a complete, organized study library. When you sit down to study, you don't waste 15 minutes figuring out where to start. You open your portal, click the next uncompleted lecture, and begin. The friction of "where do I even start?" is gone.</p>
+
+            <h4>Step 3: Daily Targets, Not Daily Subjects</h4>
+
+            <p>A common mistake is organizing your day by subject: "Monday is DSA, Tuesday is DBMS." The problem is that some topics take longer than expected, and by Wednesday you're already behind schedule, which triggers anxiety, which tanks your productivity.</p>
+
+            <p>Instead, set daily targets by number of lectures or topics completed, across subjects. Example: "Today I will complete 4 lectures and solve 10 problems." If you finish DSA module 2 in the morning, switch to DBMS in the afternoon. Keep moving. Your goal is completed topics per day, not hours spent per subject.</p>
+
+            <h4>Step 4: Use Your Heatmap as Accountability</h4>
+
+            <p>The study heatmap in Pro Study Portal shows your daily study activity over the past year. When you have a 30-day countdown to exams, watching your heatmap fill up with green every single day becomes a powerful motivator. You don't want to break the streak. The psychology of streak maintenance is well-documented — once you've built up several consecutive days of activity, the desire to protect the streak motivates behavior even on days when you don't feel like studying.</p>
+
+            <p>I covered one full semester's backlog in 28 days using this system. It was not easy. It required 6 to 8 hours of daily study. But it was completely doable because I had a clear system, organized materials, and a visual progress tracker that showed me I was making real progress every single day.</p>
+        `
+    },
+    {
+        emoji: "🌙",
+        tag: "Wellness",
+        date: "January 19, 2025",
+        title: "Sleep, Study, and Your Brain: Why Sleeping Less Is Studying Less",
+        excerpt: "Late-night cramming feels productive. The science says otherwise. Here is what actually happens to your memory when you skip sleep.",
+        body: `
+            <p>Engineering students are almost proud of how little they sleep. "Main kal raat 2 baje tak padha" is said like a badge of honor in college corridors. All-nighters before exams are considered a rite of passage. But here's the uncomfortable truth that neuroscience has made very clear over the last two decades: sleeping less is not studying harder. It is studying stupider.</p>
+
+            <p>Understanding what sleep actually does to your ability to learn will permanently change how you think about your study schedule.</p>
+
+            <h4>Memory Consolidation: What Sleep Is Actually Doing</h4>
+
+            <p>Learning has two phases. The first phase is acquisition — when you encounter new information and your brain creates a temporary, fragile representation of it. The second phase is consolidation — when your brain converts that fragile temporary memory into a stable, long-term one.</p>
+
+            <p>Consolidation happens primarily during sleep. During deep sleep (slow-wave sleep) and REM sleep, your brain systematically reviews the experiences of the day, strengthens the neural connections that represent important memories, and prunes away irrelevant ones. The hippocampus — your brain's temporary memory buffer — transfers information to the cortex for long-term storage during this process.</p>
+
+            <p>When you skip sleep to study more, you are preventing this consolidation process. You might put more information into your brain's temporary buffer, but without sleep, much of it will not transfer to long-term storage. You wake up the next day having forgotten a significant portion of what you studied late at night.</p>
+
+            <h4>The Exam-Night Disaster</h4>
+
+            <p>The research on sleep deprivation and exam performance is devastating for the all-nighter tradition. Studies consistently show that a single night of poor sleep (less than 5 hours) reduces memory recall, creative problem-solving, and abstract reasoning — all of which are heavily tested in engineering exams. Worse, sleep-deprived students consistently overestimate their own performance. They feel like they know the material better than they actually do, right up until the moment the exam reveals otherwise.</p>
+
+            <p>There is also the issue of emotional regulation. Sleep deprivation makes you more anxious, more irritable, and more prone to stress responses. In an exam environment where staying calm and thinking clearly is essential, walking in sleep-deprived is one of the worst things you can do to yourself.</p>
+
+            <h4>The Better Alternative: Spaced Study + Full Sleep</h4>
+
+            <p>The research-backed alternative to cramming is spaced repetition: studying material in multiple shorter sessions spread across several days, with full nights of sleep between each session. Each sleep cycle gives your brain another opportunity to consolidate what you studied. By the time your exam arrives, the material has been consolidated multiple times and is stored deeply in long-term memory.</p>
+
+            <p>This is why starting your study sessions early — weeks before the exam, not nights before — is not just advice from parents. It is basic neuroscience. And it is why having a consistent daily study system, tracked with something like the study portal's heatmap and consistency tracker, produces dramatically better exam results than last-minute cramming marathons.</p>
+
+            <p>Sleep 7 to 8 hours. Study consistently. Your brain will do the rest.</p>
+        `
+    },
+    {
+        emoji: "🚀",
+        tag: "Career",
+        date: "February 3, 2025",
+        title: "From Backbencher to Developer: How Learning to Code Changed My College Life",
+        excerpt: "I started coding to pass an exam. Then something unexpected happened — I actually fell in love with building things.",
+        body: `
+            <p>If you had told me in my first semester that by the end of my second year I would have built and launched my own web application, I would have laughed. I was not a "gifted" student. I was not the guy who understood pointers the first time they were explained, or who could write recursion from memory. I was the guy sitting in the back row of the C programming lab, genuinely confused about why a computer needed to be told the difference between an integer and a float.</p>
+
+            <p>This is the story of how I went from that confused backbencher to someone who builds full-stack applications — and what I learned along the way that I wish someone had told me in first year.</p>
+
+            <h4>The Turning Point: YouTube at 2 AM</h4>
+
+            <p>The moment everything changed was a completely unplanned one. I couldn't sleep one night in my second semester, and I randomly stumbled onto a YouTube video of someone building a simple to-do list application using HTML, CSS, and JavaScript. I had learned these in theory in class. But watching someone actually build something — something that appeared on screen and responded to clicks — was completely different from a lecture slide.</p>
+
+            <p>I kept watching. One video became five. Five became a playlist. I started following along, pausing and replicating every step. By 4 AM I had my own (very broken) version of a to-do list running in my browser. It was ugly. Half the features didn't work. But it was mine. I had built it. And that feeling — the feeling of creating something from nothing using logic and code — was unlike anything I had felt in class before.</p>
+
+            <h4>The Importance of Building Projects</h4>
+
+            <p>The biggest mistake students make when learning programming is spending all their time watching and reading without building. You can watch 100 hours of JavaScript tutorials and still not be able to build a simple feature without help. That's because watching is passive learning, and programming is an active skill. The only way to actually develop it is to struggle through building real things.</p>
+
+            <p>For every topic I studied — whether it was DOM manipulation, asynchronous JavaScript, or Firebase database operations — I forced myself to build one small project that used it. Not to completion. Not perfectly. Just enough to feel what it was like to apply the concept. The confusion and troubleshooting in that process is where the real learning happens.</p>
+
+            <h4>Building Pro Study Portal</h4>
+
+            <p>Pro Study Portal was my biggest project to date. It combines HTML, CSS, vanilla JavaScript, and Firebase for authentication and Firestore database. The idea came from my own frustration with distractions while trying to learn online. Building it taught me more about web development in two months than six months of tutorials had.</p>
+
+            <p>Real projects have real problems. YouTube embeds behave differently than you expect. Firebase rules are more complex than the documentation suggests. Making something work on both mobile and desktop is harder than it looks. Every problem I solved in building this portal deepened my understanding in a way that no tutorial could replicate.</p>
+
+            <h4>Advice for Engineering Students Who Want to Build</h4>
+
+            <p>Start before you feel ready. You will never feel ready. The confusion at the beginning is not a sign that you're not capable — it is the learning process working exactly as it should. Use YouTube to learn — the resources are extraordinary and free. Organize your learning in a structured way so you can track what you've covered and what's next. Build something small, break it, fix it, and build something slightly bigger.</p>
+
+            <p>Two years from now, the thing that will set you apart in placements and interviews is not your GPA. It is what you have built. Start building today.</p>
+        `
+    },
+    {
+        emoji: "📱",
+        tag: "Digital Wellbeing",
+        date: "February 11, 2025",
+        title: "Phone Addiction and Studies: The Honest Conversation Nobody is Having",
+        excerpt: "Most productivity advice tells you to 'put your phone away.' But that's easier said than done. Here's what actually works.",
+        body: `
+            <p>Let's be real for a moment. Every student knows their phone is a distraction. Every student has been told to "just put it away." And almost every student continues to pick it up anyway, often without even consciously deciding to. You're studying, you hit a slightly difficult concept, and somehow your phone is in your hand and Instagram is open before you even realize what happened.</p>
+
+            <p>This is not a character flaw. It is the result of billions of dollars of behavioral psychology and engineering effort by some of the smartest people on the planet, whose entire job is to make your phone as compelling as possible to pick up and as difficult as possible to put down. Understanding this should shift your approach from "I need more willpower" to "I need to change my environment."</p>
+
+            <h4>Why Willpower Alone Doesn't Work</h4>
+
+            <p>Willpower — the ability to choose the harder, more beneficial option over the easier, more immediately pleasurable one — is a finite resource. Research in cognitive psychology has repeatedly demonstrated that our ability to exercise self-control degrades with use throughout the day, a phenomenon sometimes called "ego depletion." By the evening, after a full day of classes, commuting, and social interaction, your willpower reserves are significantly depleted.</p>
+
+            <p>This is precisely why most students find it easy to plan ambitious study sessions in the morning and find it nearly impossible to actually execute them at night. The plan was made with full willpower reserves. The execution is attempted with nearly empty ones. And a phone with notifications appearing every few minutes is nearly impossible to ignore on willpower alone in that state.</p>
+
+            <h4>Environmental Design: The Actual Solution</h4>
+
+            <p>The students who consistently study without phone distraction are not more disciplined — they have better environmental design. They have set up their physical space and their digital space to make distraction harder than focus. Here is what works:</p>
+
+            <p>Physical distance is the most powerful intervention. When your phone is on the desk next to you, you will pick it up. When it is in another room, you will not. The friction of getting up and walking to another room is usually enough to break the automatic habit loop. Put your phone in your bag, or in another room, before your study session begins.</p>
+
+            <p>App timers and grayscale mode can help as a secondary layer. Setting daily time limits on Instagram, YouTube, and other social apps using your phone's screen time features adds a small amount of friction to mindless scrolling. Turning your screen to grayscale removes the visual stimulation that makes apps attractive.</p>
+
+            <p>Study in a dedicated environment. Your brain builds associations between places and activities. If you study at the same desk every day, your brain will increasingly associate that desk with focus rather than relaxation. If you try to study in bed — where your brain associates the environment with sleep and relaxation — you will find it much harder to concentrate.</p>
+
+            <h4>The Role of Immediate Rewards</h4>
+
+            <p>One of the reasons phones win against studying is the reward timeline. Scrolling gives you a reward (amusement, novelty, connection) in seconds. Studying gives you a reward (exam results, knowledge, career progress) in weeks or months. Human brains are biased toward immediate rewards. This is why tracking daily progress visually — like with a study heatmap — is powerful. It creates an immediate, visible reward for studying: a green cell on your heatmap today, a visible streak growing longer. Your brain can see the progress happening now, not just months in the future.</p>
+
+            <p>Combine environmental design with immediate visual rewards, and you have a system that works with human psychology rather than against it. That's a much stronger foundation than simply trying to out-willpower a multibillion-dollar behavioral engineering machine.</p>
+        `
+    },
+    {
+        emoji: "📚",
+        tag: "Study Strategy",
+        date: "February 18, 2025",
+        title: "Active Recall vs Passive Review: The Most Important Study Skill Nobody Taught You",
+        excerpt: "Rereading your notes feels productive. But research shows it's one of the least effective study methods. Here's what actually works.",
+        body: `
+            <p>There is a study method that almost every student uses. It feels natural, comfortable, and productive. It involves reading and rereading notes, highlighting textbooks, and reviewing slides. Cognitive scientists call it passive review. And decades of research have shown, with remarkable consistency, that it is one of the least effective ways to prepare for an exam.</p>
+
+            <p>The method that actually works — the one with overwhelming scientific support — is called active recall. And almost no one teaches it explicitly, which is a genuine problem in education.</p>
+
+            <h4>The Illusion of Knowing</h4>
+
+            <p>Here is why passive review fails despite feeling productive: when you read something you've already seen, recognition kicks in. "Yes, I've seen this before. I know this." That feeling of familiarity creates the illusion that you have learned the material — that you could reproduce it on an exam. But recognition and recall are completely different cognitive processes. You might recognize information instantly when you see it and still be completely unable to retrieve it from memory when you need to produce it on a blank exam paper.</p>
+
+            <p>Students who study primarily by rereading are routinely surprised by how poorly they perform on exams. "I studied for hours," they say. And they did. But they studied by reviewing rather than retrieving, and the testing conditions require retrieval, not recognition.</p>
+
+            <h4>What Active Recall Looks Like</h4>
+
+            <p>Active recall means closing your notes and attempting to retrieve information from memory, then checking whether you were right. Practically, this looks like: read a section of notes, close them, and write or say everything you can remember. Open your notes, check what you missed or got wrong, close them again, and try to recall the missed information. Repeat.</p>
+
+            <p>Other forms of active recall include solving practice problems without looking at the solution first, writing a summary of a lecture from memory immediately after watching it, and using flashcards (the Anki app is excellent for this) to test yourself on key facts and concepts.</p>
+
+            <h4>Applying This to Video Lectures</h4>
+
+            <p>For YouTube lecture-based learning — which is how most students studying from online resources do it — active recall can be built into your process simply by changing what you do at the end of each lecture.</p>
+
+            <p>When a lecture ends, don't immediately start the next one. Instead, open your notes section (the Pro Study Portal has one for every lecture) and write everything you remember from the lecture — the main concepts, the formulas, the examples — from memory. Don't rewatch. Don't look at the video. Just retrieve. Then check the video or your notes for what you missed. This post-lecture recall exercise, taking just 5 to 10 minutes, will roughly double the amount of information you retain from that lecture compared to simply moving on to the next one.</p>
+
+            <h4>Testing is Learning</h4>
+
+            <p>The broader principle is this: testing yourself is not just a way to check what you know. The act of testing is itself the best way to learn. Every time you successfully retrieve a piece of information from memory, you strengthen the neural pathway that stores it, making it easier to retrieve next time. This is the testing effect, and it is one of the most robustly replicated findings in educational psychology.</p>
+
+            <p>Change one habit: at the end of every lecture, write a recall summary from memory. Do this consistently and your exam performance will improve more than any other single change you can make to your study routine.</p>
+        `
+    },
+    {
+        emoji: "🤝",
+        tag: "Community",
+        date: "February 25, 2025",
+        title: "Study Groups: When They Help and When They Hurt Your Learning",
+        excerpt: "Studying with friends can be the most productive thing you do — or the biggest waste of time. The difference is in how you do it.",
+        body: `
+            <p>Study groups are one of those things that every student tries at some point in college. They emerge naturally before exams — a group of friends decides to study together in the hostel common room or a library corner, convinced that collective effort will somehow produce better results than studying alone. Sometimes it works brilliantly. Often it doesn't work at all. Understanding the difference is worth your attention.</p>
+
+            <h4>When Study Groups Work</h4>
+
+            <p>Study groups are most effective in specific, well-defined circumstances. The most powerful use of a study group is explaining concepts to each other. If you can explain a concept clearly enough that a classmate who was confused understands it, you have demonstrated genuine mastery. The act of explaining forces you to identify gaps in your own understanding that you might not notice when reviewing alone. This is the foundation of the Feynman Technique, one of the most effective learning methods ever described.</p>
+
+            <p>Study groups are also effective for solving challenging problems together — not dividing problems among members (a very common mistake), but genuinely sitting together and working through a single problem collectively, discussing why each step makes sense. Group debugging in programming, collaborative proof-solving in mathematics, or working through case studies in management — these are genuinely strengthened by collective discussion.</p>
+
+            <p>Finally, study groups can be effective for accountability. Knowing that other people are expecting you to show up and be prepared creates external commitment that helps on days when internal motivation is low. This is the same reason people run more consistently when they have a running partner.</p>
+
+            <h4>When Study Groups Fail</h4>
+
+            <p>Most student study groups fail because they are not actually study groups — they are social groups with textbooks present. The study group meets, 10 minutes of actual work happens, someone mentions an exam anecdote, the conversation drifts, and an hour later the group has laughed a lot and learned very little. This is not a personal failing. It is the natural result of putting social people in social environments and expecting them to maintain individual focus tasks.</p>
+
+            <p>Study groups also fail when they create the illusion of understanding through social proof. When someone in the group explains something confidently, other members often nod and feel like they understand, even when they don't. The group dynamic creates social pressure to appear like you've understood, even when you haven't. Checking your actual comprehension — by trying to solve a problem alone — reveals whether the group session produced real learning or just social comfort.</p>
+
+            <h4>The Hybrid Approach</h4>
+
+            <p>The most effective approach is studying primarily alone — using systematic tools like a structured study portal, organized notes, and active recall — and using the study group for two specific activities: explaining concepts to each other and solving difficult problems collaboratively. Keep group sessions short and structured, with a clear agenda. Start and end on time. Spend the first 30 minutes having each person explain one concept from memory. Spend the next 30 minutes solving problems together.</p>
+
+            <p>This way, you get the genuine benefits of collective learning without losing the deep focus that individual study provides.</p>
+        `
+    },
+    {
+        emoji: "🌱",
+        tag: "Growth Mindset",
+        date: "March 5, 2025",
+        title: "I Failed a Subject. Here's What It Taught Me About Learning and Self-Compassion",
+        excerpt: "Failing is not the end of the story. Sometimes it's the beginning of actually understanding why you do what you do.",
+        body: `
+            <p>I am going to tell you something that I don't share often, because there is still a strange shame attached to it in college culture: I failed a subject in my engineering degree. Not performed poorly. Not barely scraped through. Failed. Had to reappear for a supplementary exam.</p>
+
+            <p>And it was, genuinely, one of the most important things that happened to me in college.</p>
+
+            <h4>The Failure</h4>
+
+            <p>The subject was one where I had convinced myself, entirely incorrectly, that I was doing fine. I attended classes. I took some notes. I reviewed them vaguely before the exam. I had never attempted a single previous year paper. I walked into the exam hall reasonably confident and walked out genuinely shocked by how little I could answer.</p>
+
+            <p>The result came out and confirmed what the exam had suggested: I had failed. My first instinct was the one most students have: to feel crushing shame and to look for someone or something to blame. The teaching wasn't good. The paper was unfair. I hadn't had enough time.</p>
+
+            <p>None of these were the real reason. The real reason was simpler and harder to admit: I had never properly learned the material. I had spent hours in proximity to the subject — sitting in class, reading notes — but I had never done the actual cognitive work of understanding it. I had mistaken familiarity for knowledge, and the exam had exposed the difference with brutal efficiency.</p>
+
+            <h4>What Changed</h4>
+
+            <p>Preparing for the supplementary exam was different from any studying I had done before. I was no longer going through the motions. I genuinely needed to understand the material, because I had already experienced the consequences of pretending that I did. I started over from the beginning. I found YouTube lectures. I added them to a structured course folder. I took notes on every lecture. I solved problems from scratch without looking at solutions. I tested myself repeatedly.</p>
+
+            <p>I passed the supplementary comfortably. And more importantly, I actually understood the subject. The failure had forced me into a study method that worked, because the stakes were finally real enough that pretending to study was no longer an option.</p>
+
+            <h4>Self-Compassion is Not the Same as Making Excuses</h4>
+
+            <p>One of the most important things I learned from this experience was the difference between self-compassion and making excuses. Making excuses means attributing the failure to external factors and concluding that no change in behavior is needed. Self-compassion means acknowledging the failure clearly, without exaggerating its meaning ("I am a failure, I will never succeed"), and choosing to move forward with different behavior.</p>
+
+            <p>Psychologist Kristin Neff's research on self-compassion has found, somewhat counterintuitively, that students who treat themselves with self-compassion after failure are more motivated to improve than those who engage in harsh self-criticism. Harsh self-criticism triggers an emotional crisis response that makes it harder, not easier, to take constructive action. Self-compassion creates emotional stability that allows you to look clearly at what went wrong and fix it.</p>
+
+            <h4>Failure Is Data</h4>
+
+            <p>A failed exam tells you something precise: the study method you used did not produce sufficient retention of the material to perform well under exam conditions. That is useful information. It tells you specifically that you need a different study method — not that you are not smart enough, not that you don't belong in this field, not that you should give up.</p>
+
+            <p>If you have failed something recently, or if you are afraid of failing something: be honest about the method, not the person. What study approach did you use? Was it passive or active? Was it organized or scattered? Did you test yourself regularly or did you only review? Change the method. Track your progress. Stay consistent. The result will change too.</p>
+        `
+    }
+];
+
+function renderBlogs() {
+    const grid = document.getElementById('blog-grid');
+    blogs.forEach((b, i) => {
+        const card = document.createElement('a');
+        card.className = 'blog-card';
+        card.href = '#';
+        card.innerHTML = `
+            <div class="blog-img">${b.emoji}</div>
+            <div class="blog-body">
+                <div class="blog-meta">
+                    <span class="blog-tag">${b.tag}</span>
+                    <span class="blog-date">${b.date}</span>
                 </div>
-            `).join('');
-        }
-
-        window.openBlog = (id) => {
-            const post = blogPosts.find(p => p.id === id);
-            const content = document.getElementById('blog-content');
-            content.innerHTML = `
-                <div class="flex items-center gap-2 mb-2">
-                    <span class="text-[var(--accent)] text-xs font-bold uppercase">${post.category}</span>
-                    <span class="text-[var(--text-muted)] text-xs">• ${post.date}</span>
-                </div>
-                <h1 class="text-4xl font-extrabold">${post.title}</h1>
-                <div class="blog-img text-6xl py-12 bg-opacity-50">${post.emoji}</div>
-                <div class="text-[var(--text-main)] text-lg leading-relaxed space-y-4">
-                    ${post.content}
-                </div>
-                <div class="pt-8 border-t border-[var(--border)]">
-                    <p class="text-sm text-[var(--text-muted)] italic">Asha hai aapko ye story pasand aayi hogi. Mehnat karte rahiye!</p>
-                </div>
-            `;
-            showModal('blog-modal');
-        }
-
-        // --- AUTH & FIREBASE (SAFE & UNTOUCHED) ---
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                currentUser = user;
-                document.getElementById('auth-buttons').classList.add('hidden');
-                document.getElementById('user-profile').classList.remove('hidden');
-                document.getElementById('user-initial').innerText = (user.isAnonymous ? 'S' : user.displayName ? user.displayName[0] : 'U');
-                setupDataListener();
-            }
+                <h3>${b.title}</h3>
+                <p>${b.excerpt}</p>
+                <div class="blog-read">Read Article →</div>
+            </div>
+        `;
+        card.addEventListener('click', (e) => {
+            e.preventDefault();
+            openBlog(i);
         });
+        grid.appendChild(card);
+    });
+}
 
-        window.handleLogin = () => signInAnonymously(auth).then(() => navigateTo('app'));
+function openBlog(i) {
+    const b = blogs[i];
+    document.getElementById('modal-title').textContent = b.title;
+    document.getElementById('modal-meta').textContent = `${b.tag} · ${b.date} · Shivam Kumar`;
+    document.getElementById('modal-body').innerHTML = b.body;
+    document.getElementById('blog-modal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
 
-        function setupDataListener() {
-            const userDoc = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'settings');
-            onSnapshot(userDoc, (snap) => {
-                if (snap.exists()) {
-                    userData = { ...userData, ...snap.data() };
-                    renderUI();
-                } else { saveData(); }
-            });
-            startTimer();
-        }
+window.closeBlog = (e) => {
+    if (e.target === document.getElementById('blog-modal')) {
+        document.getElementById('blog-modal').classList.remove('open');
+        document.body.style.overflow = '';
+    }
+}
 
-        async function saveData() {
-            if (!currentUser) return;
-            await setDoc(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'settings'), userData);
-        }
+document.querySelector('.blog-modal-close') && document.querySelector('.blog-modal-close').addEventListener('click', () => {
+    document.getElementById('blog-modal').classList.remove('open');
+    document.body.style.overflow = '';
+});
 
-        // Timer Logic
-        function startTimer() {
-            setInterval(() => {
-                sessionSeconds++;
-                if (sessionSeconds % 60 === 0) {
-                    const today = new Date().toISOString().split('T')[0];
-                    userData.studyLogs[today] = (userData.studyLogs[today] || 0) + 60;
-                    saveData();
-                }
-            }, 1000);
-        }
-
-        // --- DASHBOARD LOGIC (SAFE) ---
-        window.addGoal = () => {
-            const txt = document.getElementById('goal-input').value.trim();
-            if (!txt) return;
-            userData.goals.push({ text: txt, completed: false, id: Date.now() });
-            document.getElementById('goal-input').value = '';
-            saveData();
-        };
-
-        window.toggleGoal = (id) => {
-            const g = userData.goals.find(x => x.id === id);
-            if (g) g.completed = !g.completed;
-            saveData();
-        };
-
-        window.createCourse = () => {
-            const name = document.getElementById('new-course-name').value.trim();
-            if (name) userData.courses.push({ name, topics: [] });
-            hideModal('course-modal');
-            saveData();
-        };
-
-        window.selectCourse = (idx) => { activeCourseIdx = idx; activeTopicIdx = -1; renderUI(); };
-
-        window.addTopic = () => {
-            const title = document.getElementById('new-topic-title').value.trim();
-            const url = document.getElementById('new-topic-url').value.trim();
-            const videoId = url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/)?.[1];
-            if (videoId) {
-                userData.courses[activeCourseIdx].topics.push({ title, url: `https://www.youtube.com/embed/${videoId}?modestbranding=1`, notes: "", completed: false });
-                hideModal('topic-modal'); saveData();
-            } else alert('Invalid link');
-        };
-
-        window.selectTopic = (idx) => { activeTopicIdx = idx; renderUI(); };
-        window.toggleComplete = () => { userData.courses[activeCourseIdx].topics[activeTopicIdx].completed = !userData.courses[activeCourseIdx].topics[activeTopicIdx].completed; saveData(); };
-        window.deleteTopic = () => { if(confirm("Delete topic?")){userData.courses[activeCourseIdx].topics.splice(activeTopicIdx, 1); activeTopicIdx = -1; saveData();} };
-        
-        let saveTimeout;
-        window.autoSaveNotes = () => {
-            userData.courses[activeCourseIdx].topics[activeTopicIdx].notes = document.getElementById('notes-area').value;
-            clearTimeout(saveTimeout);
-            saveTimeout = setTimeout(saveData, 1000);
-        };
-
-        window.toggleTheme = () => {
-            userData.theme = userData.theme === 'light' ? 'dark' : 'light';
-            document.documentElement.setAttribute('data-theme', userData.theme);
-            saveData();
-        };
-
-        function renderUI() {
-            document.documentElement.setAttribute('data-theme', userData.theme);
-            const todayStr = new Date().toISOString().split('T')[0];
-            document.getElementById('stat-today').innerText = `${Math.floor((userData.studyLogs[todayStr] || 0)/60)}m`;
-            
-            // Stats & Heatmap
-            const totalSecs = Object.values(userData.studyLogs).reduce((a,b) => a+b, 0);
-            document.getElementById('stat-weekly').innerText = `${(totalSecs/3600).toFixed(1)}h`;
-            
-            const container = document.getElementById('heatmap-container');
-            container.innerHTML = '';
-            const last90 = new Array(90).fill(0).map((_, i) => {
-                const d = new Date(); d.setDate(d.getDate() - (89-i));
-                return d.toISOString().split('T')[0];
-            });
-            last90.forEach(d => {
-                const secs = userData.studyLogs[d] || 0;
-                const cell = document.createElement('div');
-                cell.className = `heatmap-cell ${secs > 3600 ? 'h-l4' : secs > 1200 ? 'h-l2' : secs > 0 ? 'h-l1' : ''}`;
-                cell.title = `${d}: ${Math.floor(secs/60)}m`;
-                container.appendChild(cell);
-            });
-
-            // List Rendering
-            document.getElementById('goal-list').innerHTML = userData.goals.map(g => `
-                <div class="flex items-center gap-2 text-sm bg-[var(--sidebar-bg)] p-3 rounded-lg">
-                    <input type="checkbox" ${g.completed ? 'checked' : ''} onchange="toggleGoal(${g.id})" class="accent-[var(--accent)]">
-                    <span class="${g.completed ? 'line-through text-[var(--text-muted)]' : ''}">${g.text}</span>
-                </div>
-            `).join('');
-
-            document.getElementById('course-list').innerHTML = userData.courses.map((c, i) => `
-                <button onclick="selectCourse(${i})" class="w-full text-left p-3 rounded-lg text-xs transition-all ${activeCourseIdx === i ? 'bg-[var(--accent)] text-white font-bold' : 'text-[var(--text-muted)] hover:bg-[var(--bg-dark)]'}">
-                    📁 ${c.name}
-                </button>
-            `).join('');
-
-            if (activeCourseIdx !== -1) {
-                document.getElementById('topic-list').innerHTML = userData.courses[activeCourseIdx].topics.map((t, i) => `
-                    <div onclick="selectTopic(${i})" class="p-3 rounded-lg text-xs cursor-pointer border ${activeTopicIdx === i ? 'border-[var(--accent)] bg-[var(--card-bg)] shadow-sm' : 'border-transparent hover:bg-[var(--bg-dark)]'} ${t.completed ? 'opacity-40' : ''}">
-                        ${t.completed ? '✅' : '▶️'} ${t.title}
-                    </div>
-                `).join('');
-            }
-
-            // Player logic
-            const dash = document.getElementById('dashboard-home');
-            const player = document.getElementById('player-view');
-            if (activeCourseIdx !== -1 && activeTopicIdx !== -1) {
-                dash.classList.add('hidden'); player.classList.remove('hidden');
-                const topic = userData.courses[activeCourseIdx].topics[activeTopicIdx];
-                document.getElementById('current-topic-title').innerText = topic.title;
-                const frame = document.getElementById('main-player');
-                if(frame.src !== topic.url) frame.src = topic.url;
-                document.getElementById('notes-area').value = topic.notes;
-                document.getElementById('complete-btn').innerText = topic.completed ? '🎉 Topic Completed' : '✅ Mark as Completed';
-            } else {
-                dash.classList.remove('hidden'); player.classList.add('hidden');
-            }
-        }
-
-        window.showModal = (id) => {
-            document.getElementById(id).classList.remove('hidden');
-            document.getElementById(id).classList.add('flex');
-        };
-        window.hideModal = (id) => {
-            document.getElementById(id).classList.add('hidden');
-            document.getElementById(id).classList.remove('flex');
-        };
-
-        navigateTo('landing');
-    </script>
+renderBlogs();
+</script>
 </body>
 </html>
